@@ -2,6 +2,7 @@ package com.comp2042;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;                    // ← added
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -50,6 +51,9 @@ public class GuiController implements Initializable {
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
+
+    @FXML private javafx.scene.control.Label scoreLabel;   // ← label to show score
+    @FXML private javafx.scene.control.Button pauseButton; // Pause button
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -113,7 +117,6 @@ public class GuiController implements Initializable {
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
-
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
@@ -125,37 +128,18 @@ public class GuiController implements Initializable {
     private Paint getFillColor(int i) {
         Paint returnPaint;
         switch (i) {
-            case 0:
-                returnPaint = Color.TRANSPARENT;
-                break;
-            case 1:
-                returnPaint = Color.AQUA;
-                break;
-            case 2:
-                returnPaint = Color.BLUEVIOLET;
-                break;
-            case 3:
-                returnPaint = Color.DARKGREEN;
-                break;
-            case 4:
-                returnPaint = Color.YELLOW;
-                break;
-            case 5:
-                returnPaint = Color.RED;
-                break;
-            case 6:
-                returnPaint = Color.BEIGE;
-                break;
-            case 7:
-                returnPaint = Color.BURLYWOOD;
-                break;
-            default:
-                returnPaint = Color.WHITE;
-                break;
+            case 0: returnPaint = Color.TRANSPARENT; break;
+            case 1: returnPaint = Color.AQUA; break;
+            case 2: returnPaint = Color.BLUEVIOLET; break;
+            case 3: returnPaint = Color.DARKGREEN; break;
+            case 4: returnPaint = Color.YELLOW; break;
+            case 5: returnPaint = Color.RED; break;
+            case 6: returnPaint = Color.BEIGE; break;
+            case 7: returnPaint = Color.BURLYWOOD; break;
+            default: returnPaint = Color.WHITE; break;
         }
         return returnPaint;
     }
-
 
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
@@ -200,8 +184,12 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
-    public void bindScore(IntegerProperty integerProperty) {
+
+    public void bindScore(IntegerProperty scoreProp) {
+        // Displays "Score: <number>" and updates automatically as the property changes
+        scoreLabel.textProperty().bind(Bindings.format("Score: %d", scoreProp));
     }
+    // ============================
 
     public void gameOver() {
         timeLine.stop();
@@ -213,13 +201,38 @@ public class GuiController implements Initializable {
         timeLine.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
-        gamePanel.requestFocus();
-        timeLine.play();
+
+        // reset pause/game-over state
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
+
+        // reset pause button text
+        if (pauseButton != null) {
+            pauseButton.setText("Pause");
+        }
+
+        gamePanel.requestFocus();
+        timeLine.play();
     }
 
     public void pauseGame(ActionEvent actionEvent) {
+        // don't pause if game is over
+        if (isGameOver.getValue() == Boolean.TRUE) {
+            return;
+        }
+
+        if (isPause.getValue() == Boolean.TRUE) {
+            // currently paused → resume
+            timeLine.play();
+            isPause.setValue(Boolean.FALSE);
+            pauseButton.setText("Pause");
+        } else {
+            // currently running → pause
+            timeLine.pause();
+            isPause.setValue(Boolean.TRUE);
+            pauseButton.setText("Resume");
+        }
+
         gamePanel.requestFocus();
     }
 }

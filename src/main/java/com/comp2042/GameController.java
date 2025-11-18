@@ -12,6 +12,7 @@ public class GameController implements InputEventListener {
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
+
     }
 
     @Override
@@ -31,10 +32,10 @@ public class GameController implements InputEventListener {
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
 
         } else {
-            if (event.getEventSource() == EventSource.USER) {
-                board.getScore().add(1);
-            }
+            //  DO NOT award +1 for user soft drops anymore.
+            // This makes scoring dependent only on line clears (classic behavior).
         }
+
         return new DownData(clearRow, board.getViewData());
     }
 
