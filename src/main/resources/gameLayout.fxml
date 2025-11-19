@@ -6,12 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
-<Pane fx:controller="com.comp2042.GuiController"
-      xmlns:fx="http://javafx.com/fxml">
+<Pane fx:controller="com.comp2042.GuiController" xmlns:fx="http://javafx.com/fxml">
     <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
     <BorderPane styleClass="gameBoard" fx:id="gameBoard">
         <center>
-            <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="0" layoutX="40"/>
+            <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="0" layoutX="40"/> <!-- Fixed layoutY to 0 -->
         </center>
     </BorderPane>
     <!-- Score + controls panel on the right -->

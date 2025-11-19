@@ -38,6 +38,44 @@ public class GameController implements InputEventListener {
 
         return new DownData(clearRow, board.getViewData());
     }
+    @Override
+    public DownData onHardDropEvent(MoveEvent event) {
+        int dropDistance = 0;
+        boolean canMove;
+        ClearRow clearRow = null;
+
+        // Move the current brick down until it can't move anymore
+        do {
+            canMove = board.moveBrickDown();
+            if (canMove) {
+                dropDistance++;
+            }
+        } while (canMove);
+
+        // Brick has locked – merge into background
+        board.mergeBrickToBackground();
+
+        // Clear any full rows
+        clearRow = board.clearRows();
+        if (clearRow.getLinesRemoved() > 0) {
+            board.getScore().add(clearRow.getScoreBonus());
+        }
+
+        // Hard-drop bonus: +2 points per row moved
+        if (dropDistance > 0) {
+            board.getScore().add(dropDistance * 2);
+        }
+
+        // Spawn a new brick or end game
+        if (board.createNewBrick()) {
+            viewGuiController.gameOver();
+        }
+
+        // Redraw background with the locked piece
+        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+
+        return new DownData(clearRow, board.getViewData());
+    }
 
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
