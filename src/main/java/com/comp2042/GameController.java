@@ -61,11 +61,6 @@ public class GameController implements InputEventListener {
             board.getScore().add(clearRow.getScoreBonus());
         }
 
-        // Hard-drop bonus: +2 points per row moved
-        if (dropDistance > 0) {
-            board.getScore().add(dropDistance * 2);
-        }
-
         // Spawn a new brick or end game
         if (board.createNewBrick()) {
             viewGuiController.gameOver();
