@@ -1,21 +1,24 @@
 package com.comp2042.logic.bricks;
 
 import com.comp2042.logic.board.MatrixOperations;
-
 import java.util.ArrayList;
 import java.util.List;
 
-final class SBrick implements Brick {
+public final class SBrick implements Brick {
 
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
     public SBrick() {
+
+        // 0°
         brickMatrix.add(new int[][]{
                 {0, 0, 0, 0},
                 {0, 5, 5, 0},
                 {5, 5, 0, 0},
                 {0, 0, 0, 0}
         });
+
+        // 90°
         brickMatrix.add(new int[][]{
                 {5, 0, 0, 0},
                 {5, 5, 0, 0},
