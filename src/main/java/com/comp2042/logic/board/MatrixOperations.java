@@ -8,20 +8,35 @@ import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MatrixOperations {
+public final class MatrixOperations {
 
+    private MatrixOperations() {}
 
-    //We don't want to instantiate this utility class
-    private MatrixOperations(){
+    // ----------------------------------------------------------
+    // COLLISION CHECK
+    // ----------------------------------------------------------
+    public static boolean intersect(final int[][] matrix,
+                                    final int[][] brick,
+                                    int x, int y) {
 
-    }
+        for (int row = 0; row < brick.length; row++) {
+            for (int col = 0; col < brick[row].length; col++) {
 
-    public static boolean intersect(final int[][] matrix, final int[][] brick, int x, int y) {
-        for (int i = 0; i < brick.length; i++) {
-            for (int j = 0; j < brick[i].length; j++) {
-                int targetX = x + i;
-                int targetY = y + j;
-                if (brick[j][i] != 0 && (checkOutOfBound(matrix, targetX, targetY) || matrix[targetY][targetX] != 0)) {
+                if (brick[row][col] == 0) continue;
+
+                int targetRow = y + row;
+                int targetCol = x + col;
+
+                // Out of bounds → collision
+                if (targetRow < 0 ||
+                        targetRow >= matrix.length ||
+                        targetCol < 0 ||
+                        targetCol >= matrix[0].length) {
+                    return true;
+                }
+
+                // Collision with background
+                if (matrix[targetRow][targetCol] != 0) {
                     return true;
                 }
             }
@@ -29,73 +44,86 @@ public class MatrixOperations {
         return false;
     }
 
-    private static boolean checkOutOfBound(int[][] matrix, int targetX, int targetY) {
-        boolean returnValue = true;
-        if (targetX >= 0 && targetY < matrix.length && targetX < matrix[targetY].length) {
-            returnValue = false;
-        }
-        return returnValue;
-    }
-
+    // ----------------------------------------------------------
+    // COPY MATRIX
+    // ----------------------------------------------------------
     public static int[][] copy(int[][] original) {
-        int[][] myInt = new int[original.length][];
-        for (int i = 0; i < original.length; i++) {
-            int[] aMatrix = original[i];
-            int aLength = aMatrix.length;
-            myInt[i] = new int[aLength];
-            System.arraycopy(aMatrix, 0, myInt[i], 0, aLength);
-        }
-        return myInt;
-    }
-
-    public static int[][] merge(int[][] filledFields, int[][] brick, int x, int y) {
-        int[][] copy = copy(filledFields);
-        for (int i = 0; i < brick.length; i++) {
-            for (int j = 0; j < brick[i].length; j++) {
-                int targetX = x + i;
-                int targetY = y + j;
-                if (brick[j][i] != 0) {
-                    copy[targetY][targetX] = brick[j][i];
-                }
-            }
+        int[][] copy = new int[original.length][];
+        for (int r = 0; r < original.length; r++) {
+            copy[r] = original[r].clone();
         }
         return copy;
     }
 
+    // ----------------------------------------------------------
+    // MERGE BRICK INTO BOARD
+    // ----------------------------------------------------------
+    public static int[][] merge(int[][] board,
+                                int[][] brick,
+                                int x, int y) {
+
+        int[][] result = copy(board);
+
+        for (int row = 0; row < brick.length; row++) {
+            for (int col = 0; col < brick[row].length; col++) {
+
+                if (brick[row][col] == 0) continue;
+
+                int targetRow = y + row;
+                int targetCol = x + col;
+
+                result[targetRow][targetCol] = brick[row][col];
+            }
+        }
+
+        return result;
+    }
+
+    // ----------------------------------------------------------
+    // REMOVE FULL ROWS
+    // ----------------------------------------------------------
     public static ClearRow checkRemoving(final int[][] matrix) {
-        int[][] tmp = new int[matrix.length][matrix[0].length];
-        Deque<int[]> newRows = new ArrayDeque<>();
-        List<Integer> clearedRows = new ArrayList<>();
 
-        for (int i = 0; i < matrix.length; i++) {
-            int[] tmpRow = new int[matrix[i].length];
-            boolean rowToClear = true;
-            for (int j = 0; j < matrix[0].length; j++) {
-                if (matrix[i][j] == 0) {
-                    rowToClear = false;
+        List<Integer> cleared = new ArrayList<>();
+        Deque<int[]> remaining = new ArrayDeque<>();
+
+        for (int r = 0; r < matrix.length; r++) {
+
+            boolean full = true;
+            for (int c = 0; c < matrix[r].length; c++) {
+                if (matrix[r][c] == 0) {
+                    full = false;
+                    break;
                 }
-                tmpRow[j] = matrix[i][j];
             }
-            if (rowToClear) {
-                clearedRows.add(i);
+
+            if (full) {
+                cleared.add(r);
             } else {
-                newRows.add(tmpRow);
+                remaining.add(matrix[r]);
             }
         }
-        for (int i = matrix.length - 1; i >= 0; i--) {
-            int[] row = newRows.pollLast();
-            if (row != null) {
-                tmp[i] = row;
-            } else {
-                break;
-            }
+
+        // Build new board (bottom to top)
+        int[][] newBoard = new int[matrix.length][matrix[0].length];
+        int writeRow = matrix.length - 1;
+
+        while (!remaining.isEmpty()) {
+            newBoard[writeRow--] = remaining.pollLast();
         }
-        int scoreBonus = 50 * clearedRows.size() * clearedRows.size();
-        return new ClearRow(clearedRows.size(), tmp, scoreBonus);
+
+        // Score bonus: 1 line = 50, 2 lines = 200, 3 lines = 450, 4 lines = 800
+        int scoreBonus = 50 * cleared.size() * cleared.size();
+
+        return new ClearRow(cleared.size(), newBoard, scoreBonus);
     }
 
-    public static List<int[][]> deepCopyList(List<int[][]> list){
-        return list.stream().map(MatrixOperations::copy).collect(Collectors.toList());
+    // ----------------------------------------------------------
+    // DEEP COPY LIST OF MATRICES (USED BY BRICK ROTATIONS)
+    // ----------------------------------------------------------
+    public static List<int[][]> deepCopyList(List<int[][]> list) {
+        return list.stream()
+                .map(MatrixOperations::copy)
+                .collect(Collectors.toList());
     }
-
 }

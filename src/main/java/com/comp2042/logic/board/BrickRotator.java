@@ -1,31 +1,35 @@
 package com.comp2042.logic.board;
 
-import com.comp2042.model.NextShapeInfo;
 import com.comp2042.logic.bricks.Brick;
+import com.comp2042.model.NextShapeInfo;
+
+import java.util.List;
 
 public class BrickRotator {
 
-    private Brick brick;
-    private int currentShape = 0;
+    private List<int[][]> rotations;
+    private int currentRotationIndex = 0;
 
-    public NextShapeInfo getNextShape() {
-        int nextShape = currentShape;
-        nextShape = (++nextShape) % brick.getShapeMatrix().size();
-        return new NextShapeInfo(brick.getShapeMatrix().get(nextShape), nextShape);
+    public void setBrick(Brick brick) {
+        this.rotations = brick.getShapeMatrix();
+        this.currentRotationIndex = 0; // spawn always uses rotation 0
     }
 
     public int[][] getCurrentShape() {
-        return brick.getShapeMatrix().get(currentShape);
+        return rotations.get(currentRotationIndex);
     }
 
-    public void setCurrentShape(int currentShape) {
-        this.currentShape = currentShape;
+    public NextShapeInfo getNextShape() {
+
+        int nextIndex = (currentRotationIndex + 1) % rotations.size();
+
+        return new NextShapeInfo(
+                rotations.get(nextIndex),
+                nextIndex
+        );
     }
 
-    public void setBrick(Brick brick) {
-        this.brick = brick;
-        currentShape = 0;
+    public void setCurrentShape(int newIndex) {
+        this.currentRotationIndex = newIndex;
     }
-
-
 }
