@@ -1,5 +1,13 @@
 package com.comp2042;
 
+import com.comp2042.logic.board.Board;
+import com.comp2042.logic.board.SimpleBoard;
+import com.comp2042.logic.movement.ClearRow;
+import com.comp2042.logic.movement.DownData;
+import com.comp2042.logic.movement.MoveEvent;
+import com.comp2042.model.ViewData;
+import com.comp2042.ui.GuiController;
+
 public class GameController implements InputEventListener {
 
     private Board board = new SimpleBoard(25, 10);

@@ -1,5 +1,8 @@
-package com.comp2042;
+package com.comp2042.ui;
 
+import com.comp2042.*;
+import com.comp2042.logic.movement.*;
+import com.comp2042.model.ViewData;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;                    // ← added

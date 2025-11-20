@@ -1,4 +1,6 @@
-package com.comp2042;
+package com.comp2042.logic.movement;
+
+import com.comp2042.model.ViewData;
 
 public final class DownData {
     private final ClearRow clearRow;
