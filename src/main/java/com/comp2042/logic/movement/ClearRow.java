@@ -1,4 +1,6 @@
-package com.comp2042;
+package com.comp2042.logic.movement;
+
+import com.comp2042.logic.board.MatrixOperations;
 
 public final class ClearRow {
 
