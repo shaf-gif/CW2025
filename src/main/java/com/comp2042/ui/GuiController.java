@@ -30,6 +30,11 @@ import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
 
+    @FXML private javafx.scene.control.Button shadowButton;
+
+    // Shadow (ghost) projection toggle, enabled by default
+    private boolean isShadowEnabled = true;
+
     @FXML private GridPane gamePanel;
     @FXML private Group groupNotification;
     @FXML private GridPane brickPanel;
@@ -64,6 +69,11 @@ public class GuiController implements Initializable {
 
         gameOverPanel.setVisible(false);
 
+        // Initialize Shadow toggle button label if present
+        if (shadowButton != null) {
+            shadowButton.setText("Shadow: " + (isShadowEnabled ? "ON" : "OFF"));
+        }
+
         Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
@@ -80,6 +90,7 @@ public class GuiController implements Initializable {
                 case UP, W -> refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                 case DOWN, S -> moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                 case SPACE -> hardDrop(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
+                case H -> toggleShadow(null);
             }
         }
 
@@ -143,6 +154,7 @@ public class GuiController implements Initializable {
         ghostPanel = new GridPane();
         ghostPanel.setHgap(Constants.GRID_GAP);
         ghostPanel.setVgap(Constants.GRID_GAP);
+        ghostPanel.setVisible(isShadowEnabled);
 
         ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
 
@@ -221,12 +233,19 @@ public class GuiController implements Initializable {
             }
         }
 
-        updateGhostPanelPosition(brick);
-
-        for (int r = 0; r < brick.getBrickData().length; r++) {
-            for (int c = 0; c < brick.getBrickData()[r].length; c++) {
-                ghostRectangles[r][c].setFill(getGhostFillColor(brick.getBrickData()[r][c]));
+        // Ghost: update only when enabled
+        if (isShadowEnabled) {
+            updateGhostPanelPosition(brick);
+            if (ghostRectangles != null) {
+                for (int r = 0; r < brick.getBrickData().length; r++) {
+                    for (int c = 0; c < brick.getBrickData()[r].length; c++) {
+                        ghostRectangles[r][c].setFill(getGhostFillColor(brick.getBrickData()[r][c]));
+                    }
+                }
             }
+            if (ghostPanel != null) ghostPanel.setVisible(true);
+        } else {
+            if (ghostPanel != null) ghostPanel.setVisible(false);
         }
 
         // Update next previews
@@ -242,6 +261,8 @@ public class GuiController implements Initializable {
     }
 
     private void updateGhostPanelPosition(ViewData brick) {
+        if (!isShadowEnabled || ghostPanel == null) return;
+
         double tile = Constants.TILE_SIZE + Constants.GRID_GAP;
 
         ghostPanel.setLayoutX(gamePanel.getLayoutX() + brick.getGhostXPosition() * tile);
@@ -325,6 +346,19 @@ public class GuiController implements Initializable {
             isPause.set(true);
         }
 
+        gamePanel.requestFocus();
+    }
+
+    // Toggle Shadow (ghost) projection via button or 'H' key
+    public void toggleShadow(ActionEvent evt) {
+        isShadowEnabled = !isShadowEnabled;
+        if (shadowButton != null) {
+            shadowButton.setText("Shadow: " + (isShadowEnabled ? "ON" : "OFF"));
+        }
+        if (ghostPanel != null) {
+            ghostPanel.setVisible(isShadowEnabled);
+        }
+        // Keep focus on the board for continuous keyboard controls
         gamePanel.requestFocus();
     }
 

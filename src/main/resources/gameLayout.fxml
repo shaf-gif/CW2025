@@ -42,6 +42,11 @@
             <Button text="Restart"
                     prefWidth="80"
                     onAction="#newGame"/>
+
+            <Button fx:id="shadowButton"
+                    text="Shadow: ON"
+                    prefWidth="110"
+                    onAction="#toggleShadow"/>
         </HBox>
 
         <!-- Next pieces preview (boxed + equal spacing) -->
