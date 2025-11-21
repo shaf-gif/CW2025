@@ -152,13 +152,21 @@ public class SimpleBoard implements Board {
         int ghostX = currentOffset.x;
         int ghostY = computeGhostY();
 
+        // Collect up to three next preview shapes
+        var nextBricks = brickGenerator.peekNext(3);
+        int[][][] nextShapes = new int[nextBricks.size()][][];
+        for (int i = 0; i < nextBricks.size(); i++) {
+            nextShapes[i] = nextBricks.get(i).getShapeMatrix().get(0);
+        }
+
         return new ViewData(
                 brickRotator.getCurrentShape(),
                 currentOffset.x,
                 currentOffset.y,
-                brickGenerator.getNextBrick().getShapeMatrix().get(0),
+                nextShapes,
                 ghostX,
-                ghostY
+                ghostY,
+                true
         );
     }
 

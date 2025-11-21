@@ -7,18 +7,46 @@ public final class ViewData {
     private final int[][] brickData;
     private final int xPosition;
     private final int yPosition;
+    // Legacy single next preview (first element of nextBricksData)
     private final int[][] nextBrickData;
+    // New: support multiple next previews
+    private final int[][][] nextBricksData;
     private final int ghostXPosition;
     private final int ghostYPosition;
 
+    // Legacy constructor: single next preview
     public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData,
                     int ghostXPosition, int ghostYPosition) {
         this.brickData = brickData;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.nextBrickData = nextBrickData;
+        this.nextBricksData = new int[][][] { MatrixOperations.copy(nextBrickData) };
         this.ghostXPosition = ghostXPosition;
         this.ghostYPosition = ghostYPosition;
+    }
+
+    // New constructor: multiple next previews
+    public ViewData(int[][] brickData, int xPosition, int yPosition, int[][][] nextBricksData,
+                    int ghostXPosition, int ghostYPosition, boolean ignoreLegacy) {
+        this.brickData = brickData;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
+        this.nextBricksData = copy3D(nextBricksData);
+        // keep legacy first for compatibility
+        this.nextBrickData = (nextBricksData != null && nextBricksData.length > 0)
+                ? MatrixOperations.copy(nextBricksData[0]) : new int[0][0];
+        this.ghostXPosition = ghostXPosition;
+        this.ghostYPosition = ghostYPosition;
+    }
+
+    private static int[][][] copy3D(int[][][] src) {
+        if (src == null) return new int[0][][];
+        int[][][] out = new int[src.length][][];
+        for (int i = 0; i < src.length; i++) {
+            out[i] = MatrixOperations.copy(src[i]);
+        }
+        return out;
     }
 
     public int[][] getBrickData() {
@@ -41,7 +69,13 @@ public final class ViewData {
         return ghostYPosition;
     }
 
+    // Legacy single next
     public int[][] getNextBrickData() {
         return MatrixOperations.copy(nextBrickData);
+    }
+
+    // New: multiple next
+    public int[][][] getNextBricksData() {
+        return copy3D(nextBricksData);
     }
 }
