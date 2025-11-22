@@ -16,6 +16,9 @@ public interface Board {
 
     boolean createNewBrick();
 
+    // Hold current piece (store/swap). Does nothing if already used this turn or if swap would collide.
+    void holdCurrentBrick();
+
     int[][] getBoardMatrix();
 
     ViewData getViewData();

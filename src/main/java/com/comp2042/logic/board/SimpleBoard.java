@@ -22,6 +22,11 @@ public class SimpleBoard implements Board {
     private int[][] boardMatrix;
     private Point currentOffset;
 
+    // Hold feature state
+    private Brick heldBrick;
+    private Brick currentBrick;
+    private boolean holdUsedThisTurn;
+
     private final Score score;
 
     public SimpleBoard() {
@@ -112,12 +117,14 @@ public class SimpleBoard implements Board {
     public boolean createNewBrick() {
 
         Brick newBrick = brickGenerator.getBrick();
+        currentBrick = newBrick;
         brickRotator.setBrick(newBrick);
 
         int spawnX = width / 2 - 1;            // centered
         int spawnY = Constants.HIDDEN_ROWS;    // behind hidden rows
 
         currentOffset = new Point(spawnX, spawnY);
+        holdUsedThisTurn = false; // allow hold on new piece
 
         // If collision on spawn → game over
         return MatrixOperations.intersect(
@@ -159,6 +166,10 @@ public class SimpleBoard implements Board {
             nextShapes[i] = nextBricks.get(i).getShapeMatrix().get(0);
         }
 
+        int[][] heldShape = null;
+        if (heldBrick != null) {
+            heldShape = heldBrick.getShapeMatrix().get(0);
+        }
         return new ViewData(
                 brickRotator.getCurrentShape(),
                 currentOffset.x,
@@ -166,8 +177,34 @@ public class SimpleBoard implements Board {
                 nextShapes,
                 ghostX,
                 ghostY,
-                true
+                heldShape
         );
+    }
+
+    @Override
+    public void holdCurrentBrick() {
+        if (holdUsedThisTurn) return;
+
+        int spawnX = width / 2 - 1;
+        int spawnY = Constants.HIDDEN_ROWS;
+
+        if (heldBrick == null) {
+            // Store current and spawn a new one
+            heldBrick = currentBrick;
+            Brick newBrick = brickGenerator.getBrick();
+            currentBrick = newBrick;
+            brickRotator.setBrick(newBrick);
+            currentOffset = new Point(spawnX, spawnY);
+        } else {
+            // Swap held with current
+            Brick temp = heldBrick;
+            heldBrick = currentBrick;
+            currentBrick = temp;
+            brickRotator.setBrick(currentBrick);
+            currentOffset = new Point(spawnX, spawnY);
+        }
+
+        holdUsedThisTurn = true;
     }
 
     private int computeGhostY() {
@@ -204,6 +241,8 @@ public class SimpleBoard implements Board {
                 currentOffset.x,
                 currentOffset.y
         );
+        // After locking a piece, allow hold again on the next piece
+        holdUsedThisTurn = false;
     }
 
     @Override
@@ -221,6 +260,9 @@ public class SimpleBoard implements Board {
     @Override
     public void newGame() {
         boardMatrix = new int[height][width];
+        heldBrick = null;
+        currentBrick = null;
+        holdUsedThisTurn = false;
         score.reset();
         createNewBrick();
     }

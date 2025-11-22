@@ -13,8 +13,10 @@ public final class ViewData {
     private final int[][][] nextBricksData;
     private final int ghostXPosition;
     private final int ghostYPosition;
+    // Hold preview
+    private final int[][] heldBrickData;
 
-    // Legacy constructor: single next preview
+    // Legacy constructor: single next preview (no hold)
     public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData,
                     int ghostXPosition, int ghostYPosition) {
         this.brickData = brickData;
@@ -24,11 +26,12 @@ public final class ViewData {
         this.nextBricksData = new int[][][] { MatrixOperations.copy(nextBrickData) };
         this.ghostXPosition = ghostXPosition;
         this.ghostYPosition = ghostYPosition;
+        this.heldBrickData = new int[0][0];
     }
 
-    // New constructor: multiple next previews
+    // New constructor: multiple next previews + hold preview
     public ViewData(int[][] brickData, int xPosition, int yPosition, int[][][] nextBricksData,
-                    int ghostXPosition, int ghostYPosition, boolean ignoreLegacy) {
+                    int ghostXPosition, int ghostYPosition, int[][] heldBrickData) {
         this.brickData = brickData;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
@@ -38,6 +41,7 @@ public final class ViewData {
                 ? MatrixOperations.copy(nextBricksData[0]) : new int[0][0];
         this.ghostXPosition = ghostXPosition;
         this.ghostYPosition = ghostYPosition;
+        this.heldBrickData = heldBrickData != null ? MatrixOperations.copy(heldBrickData) : new int[0][0];
     }
 
     private static int[][][] copy3D(int[][][] src) {
@@ -77,5 +81,10 @@ public final class ViewData {
     // New: multiple next
     public int[][][] getNextBricksData() {
         return copy3D(nextBricksData);
+    }
+
+    // Hold preview
+    public int[][] getHeldBrickData() {
+        return MatrixOperations.copy(heldBrickData);
     }
 }
