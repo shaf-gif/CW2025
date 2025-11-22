@@ -45,6 +45,8 @@ public class GuiController implements Initializable {
     @FXML private GridPane nextPanel1;
     @FXML private GridPane nextPanel2;
     @FXML private GridPane nextPanel3;
+    // Hold preview
+    @FXML private GridPane holdPanel;
 
     private Rectangle[][] displayMatrix;
     private Rectangle[][] rectangles;
@@ -90,6 +92,7 @@ public class GuiController implements Initializable {
                 case UP, W -> refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                 case DOWN, S -> moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                 case SPACE -> hardDrop(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
+                case C -> refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
                 case H -> toggleShadow(null);
             }
         }
@@ -118,6 +121,7 @@ public class GuiController implements Initializable {
         drawActiveBrick(brick);
         drawGhostBrick(brick);
         renderNextPreviews(brick);
+        renderHoldPreview(brick);
 
         // Start game loop
         timeline = new Timeline(new KeyFrame(
@@ -216,6 +220,16 @@ public class GuiController implements Initializable {
         }
     }
 
+    private void renderHoldPreview(ViewData data) {
+        if (holdPanel == null) return;
+        int[][] held = data.getHeldBrickData();
+        holdPanel.getChildren().clear();
+        if (held == null || held.length == 0) {
+            return;
+        }
+        renderPreview(holdPanel, held);
+    }
+
     private Paint getGhostFillColor(int val) {
         if (val == 0) return Color.TRANSPARENT;
         return new Color(1, 1, 1, Constants.GHOST_ALPHA);
@@ -250,6 +264,8 @@ public class GuiController implements Initializable {
 
         // Update next previews
         renderNextPreviews(brick);
+        // Update hold preview
+        renderHoldPreview(brick);
     }
 
     private void updateBrickPanelPosition(ViewData brick) {
