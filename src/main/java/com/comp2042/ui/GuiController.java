@@ -4,8 +4,7 @@ import com.comp2042.InputEventListener;
 import com.comp2042.logic.Constants;
 import com.comp2042.logic.movement.*;
 import com.comp2042.model.ViewData;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -17,6 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -35,6 +35,7 @@ public class GuiController implements Initializable {
     // Shadow (ghost) projection toggle, enabled by default
     private boolean isShadowEnabled = true;
 
+    @FXML private BorderPane gameBoard;
     @FXML private GridPane gamePanel;
     @FXML private Group groupNotification;
     @FXML private GridPane brickPanel;
@@ -47,6 +48,8 @@ public class GuiController implements Initializable {
     @FXML private GridPane nextPanel3;
     // Hold preview
     @FXML private GridPane holdPanel;
+    // Overlay for game over focus
+    @FXML private Rectangle overlay;
 
     private Rectangle[][] displayMatrix;
     private Rectangle[][] rectangles;
@@ -69,13 +72,41 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(this::handleKeyPress);
 
+        // Visual initial states
         gameOverPanel.setVisible(false);
+        if (overlay != null) {
+            overlay.setManaged(false);
+            overlay.setVisible(false);
+            overlay.setOpacity(Constants.OVERLAY_OPACITY);
+            overlay.setMouseTransparent(true);
+            // Bind overlay to the game board's bounds so it never spills outside
+            if (gameBoard != null) {
+                overlay.layoutXProperty().bind(gameBoard.layoutXProperty());
+                overlay.layoutYProperty().bind(gameBoard.layoutYProperty());
+                overlay.widthProperty().bind(gameBoard.widthProperty());
+                overlay.heightProperty().bind(gameBoard.heightProperty());
+            }
+            // Match board corner rounding for a clean fit
+            overlay.setArcWidth(Constants.OVERLAY_CORNER_RADIUS);
+            overlay.setArcHeight(Constants.OVERLAY_CORNER_RADIUS);
+        }
+
+        // Apply subtle shadow to active piece layer
+        if (brickPanel != null) {
+            brickPanel.getStyleClass().add("piece-layer");
+        }
 
         // Initialize Shadow toggle button label if present
         if (shadowButton != null) {
             shadowButton.setText("Shadow: " + (isShadowEnabled ? "ON" : "OFF"));
         }
 
+        // Enable board grid if requested
+        if (Constants.SHOW_GRID && gamePanel != null) {
+            gamePanel.setGridLinesVisible(true);
+        }
+
+        // Reserved: optional reflection effect for future polish
         Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
@@ -111,7 +142,9 @@ public class GuiController implements Initializable {
             for (int col = 0; col < boardMatrix[row].length; col++) {
 
                 Rectangle rect = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
-                rect.setFill(Color.TRANSPARENT);
+                rect.setArcHeight(Constants.TILE_ROUNDING);
+                rect.setArcWidth(Constants.TILE_ROUNDING);
+                applyTileStyle(rect, 0);
 
                 displayMatrix[row][col] = rect;
                 gamePanel.add(rect, col, row - Constants.HIDDEN_ROWS);
@@ -141,9 +174,9 @@ public class GuiController implements Initializable {
             for (int c = 0; c < brick.getBrickData()[r].length; c++) {
 
                 Rectangle rect = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
-                rect.setFill(getFillColor(brick.getBrickData()[r][c]));
                 rect.setArcHeight(Constants.TILE_ROUNDING);
                 rect.setArcWidth(Constants.TILE_ROUNDING);
+                applyTileStyle(rect, brick.getBrickData()[r][c]);
 
                 rectangles[r][c] = rect;
                 brickPanel.add(rect, c, r);
@@ -159,6 +192,8 @@ public class GuiController implements Initializable {
         ghostPanel.setHgap(Constants.GRID_GAP);
         ghostPanel.setVgap(Constants.GRID_GAP);
         ghostPanel.setVisible(isShadowEnabled);
+        ghostPanel.setMouseTransparent(true);
+        ghostPanel.getStyleClass().add("ghost-layer");
 
         ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
 
@@ -183,6 +218,7 @@ public class GuiController implements Initializable {
         updateGhostPanelPosition(brick);
     }
 
+    // Legacy color mapping kept for fallback; primary styling uses CSS classes via applyTileStyle
     private Paint getFillColor(int i) {
         return switch (i) {
             case 0 -> Color.TRANSPARENT;
@@ -195,6 +231,17 @@ public class GuiController implements Initializable {
             case 7 -> Color.BURLYWOOD;
             default -> Color.WHITE;
         };
+    }
+
+    private void applyTileStyle(Rectangle rect, int val) {
+        rect.getStyleClass().removeIf(s -> s.startsWith("tile-"));
+        if (!rect.getStyleClass().contains("tile")) {
+            rect.getStyleClass().add("tile");
+        }
+        rect.getStyleClass().add("tile-" + Math.max(0, Math.min(7, val)));
+        if (val == 0) {
+            rect.setOpacity(1.0);
+        }
     }
 
     private void renderNextPreviews(ViewData data) {
@@ -212,9 +259,9 @@ public class GuiController implements Initializable {
         for (int r = 0; r < shape.length; r++) {
             for (int c = 0; c < shape[r].length; c++) {
                 Rectangle rect = new Rectangle(Constants.PREVIEW_TILE_SIZE, Constants.PREVIEW_TILE_SIZE);
-                rect.setFill(getFillColor(shape[r][c]));
                 rect.setArcHeight(Constants.TILE_ROUNDING);
                 rect.setArcWidth(Constants.TILE_ROUNDING);
+                applyTileStyle(rect, shape[r][c]);
                 panel.add(rect, c, r);
             }
         }
@@ -243,7 +290,7 @@ public class GuiController implements Initializable {
 
         for (int r = 0; r < brick.getBrickData().length; r++) {
             for (int c = 0; c < brick.getBrickData()[r].length; c++) {
-                rectangles[r][c].setFill(getFillColor(brick.getBrickData()[r][c]));
+                applyTileStyle(rectangles[r][c], brick.getBrickData()[r][c]);
             }
         }
 
@@ -289,7 +336,7 @@ public class GuiController implements Initializable {
     public void refreshGameBackground(int[][] board) {
         for (int r = Constants.HIDDEN_ROWS; r < board.length; r++) {
             for (int c = 0; c < board[r].length; c++) {
-                displayMatrix[r][c].setFill(getFillColor(board[r][c]));
+                applyTileStyle(displayMatrix[r][c], board[r][c]);
             }
         }
     }
@@ -331,13 +378,51 @@ public class GuiController implements Initializable {
 
     public void gameOver() {
         timeline.stop();
-        gameOverPanel.setVisible(true);
         isGameOver.set(true);
+
+        // Prepare panel for animation
+        gameOverPanel.setOpacity(0);
+        gameOverPanel.setScaleX(0.9);
+        gameOverPanel.setScaleY(0.9);
+        gameOverPanel.setVisible(true);
+
+        // Fade-in overlay
+        if (overlay != null) {
+            overlay.setVisible(true);
+            FadeTransition overlayFade = new FadeTransition(Duration.millis(Constants.ANIM_DURATION_MS), overlay);
+            overlayFade.setFromValue(0.0);
+            overlayFade.setToValue(Constants.OVERLAY_OPACITY);
+            overlayFade.play();
+        }
+
+        // Fade + scale the GameOver panel
+        FadeTransition fade = new FadeTransition(Duration.millis(Constants.ANIM_DURATION_MS), gameOverPanel);
+        fade.setFromValue(0.0);
+        fade.setToValue(1.0);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(Constants.ANIM_DURATION_MS), gameOverPanel);
+        scale.setFromX(0.9);
+        scale.setFromY(0.9);
+        scale.setToX(1.0);
+        scale.setToY(1.0);
+        ParallelTransition pt = new ParallelTransition(fade, scale);
+        pt.play();
     }
 
     public void newGame(ActionEvent evt) {
         timeline.stop();
+
+        // Hide overlay and panel with quick fade
+        if (overlay != null && overlay.isVisible()) {
+            FadeTransition overlayFadeOut = new FadeTransition(Duration.millis(200), overlay);
+            overlayFadeOut.setFromValue(overlay.getOpacity());
+            overlayFadeOut.setToValue(0.0);
+            overlayFadeOut.setOnFinished(e -> overlay.setVisible(false));
+            overlayFadeOut.play();
+        }
         gameOverPanel.setVisible(false);
+        gameOverPanel.setOpacity(1.0);
+        gameOverPanel.setScaleX(1.0);
+        gameOverPanel.setScaleY(1.0);
 
         eventListener.createNewGame();
         isPause.set(false);

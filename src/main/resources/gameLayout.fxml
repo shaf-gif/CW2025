@@ -5,93 +5,90 @@
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Rectangle?>
 <?import java.net.URL?>
 <Pane fx:controller="com.comp2042.ui.GuiController" xmlns:fx="http://javafx.com/fxml">
-    <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
+    <!-- Active piece and ghost layers -->
+    <GridPane fx:id="brickPanel" vgap="1" hgap="1" />
+
+    <!-- Main game board with neon border -->
     <BorderPane styleClass="gameBoard" fx:id="gameBoard">
         <center>
-            <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="0" layoutX="40"/> <!-- Fixed layoutY to 0 -->
+            <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="0" layoutX="40" />
         </center>
     </BorderPane>
-    <!-- Score + controls panel on the right -->
-    <VBox layoutX="260" layoutY="70" spacing="15" alignment="CENTER">
+
+    <!-- Right-side panel: score, controls, previews -->
+    <VBox layoutX="260" layoutY="16" spacing="12" alignment="TOP_CENTER" styleClass="side-panel">
         <!-- Score label -->
         <Label fx:id="scoreLabel"
                text="Score: 0"
                prefWidth="200"
-               prefHeight="60"
+               prefHeight="48"
                alignment="CENTER"
-               style="
-                   -fx-background-color: black;
-                   -fx-text-fill: yellow;
-                   -fx-font-family: 'digital';
-                   -fx-font-size: 28px;
-                   -fx-border-color: white;
-                   -fx-border-width: 2;
-                   -fx-border-radius: 10;
-                   -fx-background-radius: 10;
-               "/>
+               styleClass="score-label" />
 
         <!-- Buttons in a row -->
         <HBox spacing="20" alignment="CENTER">
             <Button fx:id="pauseButton"
                     text="Pause"
                     prefWidth="80"
-                    onAction="#pauseGame"/>
+                    styleClass="primary-button"
+                    onAction="#pauseGame" />
 
             <Button text="Restart"
                     prefWidth="80"
-                    onAction="#newGame"/>
+                    styleClass="primary-button"
+                    onAction="#newGame" />
 
             <Button fx:id="shadowButton"
                     text="Shadow: ON"
                     prefWidth="110"
-                    onAction="#toggleShadow"/>
+                    styleClass="toggle-button"
+                    onAction="#toggleShadow" />
         </HBox>
 
-        <!-- Hold + Next previews (boxed + equal spacing) -->
+        <!-- Hold + Next previews -->
         <VBox spacing="12" alignment="CENTER">
             <!-- Hold section -->
             <VBox spacing="6" alignment="CENTER">
-                <Label text="Hold" style="-fx-text-fill: white; -fx-font-size: 16px;"/>
-                <StackPane alignment="CENTER"
-                           prefWidth="64" prefHeight="64"
-                           style="-fx-background-color: rgba(255,255,255,0.08); -fx-border-color: white; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 4;">
-                    <GridPane fx:id="holdPanel" hgap="1" vgap="1" alignment="CENTER"/>
+                <Label text="Hold" styleClass="section-label" />
+                <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                    <GridPane fx:id="holdPanel" hgap="1" vgap="1" alignment="CENTER" />
                 </StackPane>
             </VBox>
 
             <!-- Next pieces preview -->
-            <VBox spacing="6" alignment="CENTER">
-                <Label text="Next" style="-fx-text-fill: white; -fx-font-size: 16px;"/>
+            <VBox spacing="8" alignment="CENTER">
+                <Label text="Next" styleClass="section-label" />
 
-                <StackPane alignment="CENTER"
-                           prefWidth="64" prefHeight="64"
-                           style="-fx-background-color: rgba(255,255,255,0.08); -fx-border-color: white; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 4;">
-                    <GridPane fx:id="nextPanel1" hgap="1" vgap="1" alignment="CENTER"/>
+                <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                    <GridPane fx:id="nextPanel1" hgap="1" vgap="1" alignment="CENTER" />
                 </StackPane>
 
-                <StackPane alignment="CENTER"
-                           prefWidth="64" prefHeight="64"
-                           style="-fx-background-color: rgba(255,255,255,0.08); -fx-border-color: white; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 4;">
-                    <GridPane fx:id="nextPanel2" hgap="1" vgap="1" alignment="CENTER"/>
+                <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                    <GridPane fx:id="nextPanel2" hgap="1" vgap="1" alignment="CENTER" />
                 </StackPane>
 
-                <StackPane alignment="CENTER"
-                           prefWidth="64" prefHeight="64"
-                           style="-fx-background-color: rgba(255,255,255,0.08); -fx-border-color: white; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 4;">
-                    <GridPane fx:id="nextPanel3" hgap="1" vgap="1" alignment="CENTER"/>
+                <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                    <GridPane fx:id="nextPanel3" hgap="1" vgap="1" alignment="CENTER" />
                 </StackPane>
             </VBox>
         </VBox>
     </VBox>
 
+    <!-- Semi-transparent overlay for Game Over focus -->
+    <Rectangle fx:id="overlay" visible="false" managed="false" width="300" height="510" styleClass="dim-overlay" />
+
+    <!-- Notification and Game Over group (on top of overlay) -->
     <Group fx:id="groupNotification" layoutX="14" layoutY="203">
         <VBox alignment="CENTER">
-            <GameOverPanel fx:id="gameOverPanel"/>
+            <GameOverPanel fx:id="gameOverPanel" />
         </VBox>
     </Group>
+
     <stylesheets>
-        <URL value="@window_style.css"/>
+        <URL value="@window_style.css" />
+        <URL value="@style.css" />
     </stylesheets>
 </Pane>
