@@ -1,0 +1,109 @@
+/* Modern Tetris UI theme — mostly CSS-driven, easy to retheme */
+
+/* Background — revert to app's default (window_style.css background image). */
+.root {
+    -fx-padding: 8;
+}
+.root.light {
+    /* Keep optional light theme available, but disabled by default */
+    -fx-background-color: linear-gradient(to bottom, #e6f2ff, #cce0ff, #b3ccff);
+}
+
+/* Game board: simplified, neutral border (no blue tint, no glow) */
+.gameBoard {
+    -fx-border-color: rgba(255,255,255,0.6);
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-effect: null;
+    -fx-padding: 4;
+}
+
+/* Active/ghost piece layers get subtle lift */
+.piece-layer, .ghost-layer {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 10, 0.2, 0, 2);
+}
+
+/* Right side panel spacing */
+.side-panel {
+    -fx-spacing: 15;
+}
+
+/* Score label: digital font, glossy dark look */
+.score-label {
+    -fx-font-family: "digital";
+    -fx-font-size: 28px;
+    -fx-text-fill: #FFE066;
+    -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(30,30,30,0.9));
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.25);
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-padding: 8 12 8 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 8, 0.2, 0, 2);
+}
+
+/* Section labels (Hold/Next) */
+.section-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 4, 0.2, 0, 1);
+}
+
+/* Preview boxes: rounded with soft inner shadow */
+.preview-box {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.5);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-padding: 3;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.4), 8, 0.2, 0, 1);
+}
+
+/* Buttons: rounded + consistent theme */
+.primary-button, .toggle-button {
+    -fx-background-radius: 8;
+    -fx-background-color: linear-gradient(to bottom, #3a8bd6, #1c66b2);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 6, 0.2, 0, 2);
+}
+.primary-button:hover, .toggle-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #49a0f0, #2776c7);
+}
+.primary-button:pressed, .toggle-button:pressed {
+    -fx-background-color: linear-gradient(to bottom, #1c66b2, #144a82);
+}
+
+/* Dim overlay for Game Over focus */
+.dim-overlay {
+    -fx-fill: black;
+}
+
+/* Game Over label style (uses existing class name) */
+.gameOverStyle {
+    -fx-font-family: "digital";
+    -fx-font-size: 34px; /* reduced so it fits within the board */
+    -fx-text-fill: #ff4d4f;
+    -fx-background-color: transparent; /* remove red box from legacy css */
+    -fx-padding: 4 8 4 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0.3, 0, 2);
+    -fx-text-alignment: center;
+}
+
+/* Tiles via CSS — subtle glossy gradients by type */
+.tile {
+    -fx-arc-width: 9;
+    -fx-arc-height: 9;
+}
+.tile-0 { -fx-fill: transparent; }
+.tile-1 { -fx-fill: linear-gradient(to bottom, #5ff8ff, #00bcd4); }
+.tile-2 { -fx-fill: linear-gradient(to bottom, #b085f5, #7e57c2); }
+.tile-3 { -fx-fill: linear-gradient(to bottom, #6bdc6b, #2e7d32); }
+.tile-4 { -fx-fill: linear-gradient(to bottom, #fff176, #fbc02d); }
+.tile-5 { -fx-fill: linear-gradient(to bottom, #ff8a80, #e53935); }
+.tile-6 { -fx-fill: linear-gradient(to bottom, #ffe0b2, #ffb74d); }
+.tile-7 { -fx-fill: linear-gradient(to bottom, #d7ccc8, #a1887f); }
+
+/* Optional thin grid gap effect on the board tiles could be kept via GridPane hgap/vgap */
