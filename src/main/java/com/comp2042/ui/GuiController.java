@@ -22,8 +22,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -35,77 +33,54 @@ import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
 
+    // --- View Components (FXML) ---
     @FXML private javafx.scene.control.Button shadowButton;
-
-    // Shadow (ghost) projection toggle, enabled by default
-    private boolean isShadowEnabled = true;
-
     @FXML private BorderPane gameBoard;
-    @FXML private GridPane gamePanel;
+    @FXML private GridPane gamePanel; // Background grid
     @FXML private Group groupNotification;
-    @FXML private GridPane brickPanel;
+    @FXML private GridPane brickPanel; // Active piece layer
     @FXML private GameOverPanel gameOverPanel;
     @FXML private javafx.scene.control.Label scoreLabel;
     @FXML private javafx.scene.control.Button pauseButton;
-
-    // Next previews (1..3)
+    // Next previews
     @FXML private GridPane nextPanel1;
     @FXML private GridPane nextPanel2;
     @FXML private GridPane nextPanel3;
     // Hold preview
     @FXML private GridPane holdPanel;
-    // Overlay for game over focus
     @FXML private Rectangle overlay;
 
-    private Rectangle[][] displayMatrix;
-    private Rectangle[][] rectangles;
-    private Rectangle[][] ghostRectangles;
-
-    private GridPane ghostPanel;
+    // --- Internal State & Logic ---
+    private Rectangle[][] displayMatrix; // Background tiles
     private InputEventListener eventListener;
-
     private Timeline timeline;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
 
+    // --- Refactored Managers ---
+    private BrickViewManager brickViewManager;
+    private PreviewPanelManager previewPanelManager;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        // Load font
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
 
+        // Input setup
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(this::handleKeyPress);
 
-        // Visual initial states
+        // Initialize Managers
+        // Pass brickPanel's parent to the BrickViewManager for correct GhostPanel insertion
+        Pane brickPanelContainer = brickPanel.getParent() instanceof Pane ? (Pane) brickPanel.getParent() : null;
+        brickViewManager = new BrickViewManager(brickPanel, gamePanel, shadowButton, brickPanelContainer);
+        previewPanelManager = new PreviewPanelManager(nextPanel1, nextPanel2, nextPanel3, holdPanel);
+
+        // Visual initial states setup
         gameOverPanel.setVisible(false);
-        if (overlay != null) {
-            overlay.setManaged(false);
-            overlay.setVisible(false);
-            overlay.setOpacity(Constants.OVERLAY_OPACITY);
-            overlay.setMouseTransparent(true);
-            // Bind overlay to the game board's bounds so it never spills outside
-            if (gameBoard != null) {
-                overlay.layoutXProperty().bind(gameBoard.layoutXProperty());
-                overlay.layoutYProperty().bind(gameBoard.layoutYProperty());
-                overlay.widthProperty().bind(gameBoard.widthProperty());
-                overlay.heightProperty().bind(gameBoard.heightProperty());
-            }
-            // Match board corner rounding for a clean fit
-            overlay.setArcWidth(Constants.OVERLAY_CORNER_RADIUS);
-            overlay.setArcHeight(Constants.OVERLAY_CORNER_RADIUS);
-        }
-
-        // Apply subtle shadow to active piece layer
-        if (brickPanel != null) {
-            brickPanel.getStyleClass().add("piece-layer");
-        }
-
-        // Initialize Shadow toggle button label if present
-        if (shadowButton != null) {
-            shadowButton.setText("Shadow: " + (isShadowEnabled ? "ON" : "OFF"));
-        }
+        setupOverlay();
 
         // Enable board grid if requested
         if (Constants.SHOW_GRID && gamePanel != null) {
@@ -119,18 +94,37 @@ public class GuiController implements Initializable {
         reflection.setTopOffset(-12);
     }
 
+    private void setupOverlay() {
+        if (overlay != null) {
+            overlay.setManaged(false);
+            overlay.setVisible(false);
+            overlay.setOpacity(Constants.OVERLAY_OPACITY);
+            overlay.setMouseTransparent(true);
+            // Bind overlay to the game board's bounds
+            if (gameBoard != null) {
+                overlay.layoutXProperty().bind(gameBoard.layoutXProperty());
+                overlay.layoutYProperty().bind(gameBoard.layoutYProperty());
+                overlay.widthProperty().bind(gameBoard.widthProperty());
+                overlay.heightProperty().bind(gameBoard.heightProperty());
+            }
+            overlay.setArcWidth(Constants.OVERLAY_CORNER_RADIUS);
+            overlay.setArcHeight(Constants.OVERLAY_CORNER_RADIUS);
+        }
+    }
+
     private void handleKeyPress(KeyEvent keyEvent) {
 
         if (!isPause.get() && !isGameOver.get()) {
 
             switch (keyEvent.getCode()) {
-                case LEFT, A -> refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
-                case RIGHT, D -> refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
-                case UP, W -> refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+                // Delegate to handlers, which refresh the view via managers
+                case LEFT, A -> handleMove(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+                case RIGHT, D -> handleMove(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+                case UP, W -> handleMove(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                 case DOWN, S -> moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                 case SPACE -> hardDrop(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
-                case C -> refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
-                case H -> toggleShadow(null);
+                case C -> handleMove(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
+                case H -> brickViewManager.toggleShadow(null); // Delegate to manager
             }
         }
 
@@ -138,21 +132,19 @@ public class GuiController implements Initializable {
 
         keyEvent.consume();
 
-        if(keyEvent.getCode() == KeyCode.BACK_SPACE) {
-            if (isGameOver.get()) return;
-
-            if (isPause.get()) {
-                timeline.play();
-                pauseButton.setText("Pause");
-                isPause.set(false);
-            } else {
-                timeline.pause();
-                pauseButton.setText("Resume");
-                isPause.set(true);
-            }
-
-            gamePanel.requestFocus();
+        // Use pauseGame method for consistent logic
+        if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
+            pauseGame(null);
         }
+    }
+
+    /**
+     * Helper to refresh view after a non-down/hard-drop event (Left, Right, Rotate, Hold).
+     */
+    private void handleMove(ViewData brick) {
+        if (isPause.get()) return;
+        brickViewManager.refreshBrick(brick);
+        previewPanelManager.renderAllPreviews(brick);
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -166,17 +158,18 @@ public class GuiController implements Initializable {
                 Rectangle rect = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
                 rect.setArcHeight(Constants.TILE_ROUNDING);
                 rect.setArcWidth(Constants.TILE_ROUNDING);
-                applyTileStyle(rect, 0);
+                TileStyleUtility.applyTileStyle(rect, 0); // Use the shared utility
 
                 displayMatrix[row][col] = rect;
                 gamePanel.add(rect, col, row - Constants.HIDDEN_ROWS);
             }
         }
 
-        drawActiveBrick(brick);
-        drawGhostBrick(brick);
-        renderNextPreviews(brick);
-        renderHoldPreview(brick);
+        // Delegate drawing of active and ghost bricks
+        brickViewManager.initDrawBricks(brick);
+
+        // Delegate rendering of previews
+        previewPanelManager.renderAllPreviews(brick);
 
         // Start game loop
         timeline = new Timeline(new KeyFrame(
@@ -187,212 +180,45 @@ public class GuiController implements Initializable {
         timeline.play();
     }
 
-    private void drawActiveBrick(ViewData brick) {
-
-        rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
-        brickPanel.getChildren().clear();
-
-        for (int r = 0; r < brick.getBrickData().length; r++) {
-            for (int c = 0; c < brick.getBrickData()[r].length; c++) {
-
-                Rectangle rect = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
-                rect.setArcHeight(Constants.TILE_ROUNDING);
-                rect.setArcWidth(Constants.TILE_ROUNDING);
-                applyTileStyle(rect, brick.getBrickData()[r][c]);
-
-                rectangles[r][c] = rect;
-                brickPanel.add(rect, c, r);
-            }
-        }
-
-        updateBrickPanelPosition(brick);
-    }
-
-    private void drawGhostBrick(ViewData brick) {
-
-        ghostPanel = new GridPane();
-        ghostPanel.setHgap(Constants.GRID_GAP);
-        ghostPanel.setVgap(Constants.GRID_GAP);
-        ghostPanel.setVisible(isShadowEnabled);
-        ghostPanel.setMouseTransparent(true);
-        ghostPanel.getStyleClass().add("ghost-layer");
-
-        ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
-
-        for (int r = 0; r < brick.getBrickData().length; r++) {
-            for (int c = 0; c < brick.getBrickData()[r].length; c++) {
-
-                Rectangle rect = new Rectangle(Constants.TILE_SIZE, Constants.TILE_SIZE);
-                rect.setFill(getGhostFillColor(brick.getBrickData()[r][c]));
-                rect.setArcHeight(Constants.TILE_ROUNDING);
-                rect.setArcWidth(Constants.TILE_ROUNDING);
-
-                ghostRectangles[r][c] = rect;
-                ghostPanel.add(rect, c, r);
-            }
-        }
-
-        if (brickPanel.getParent() instanceof Pane parent) {
-            int idx = parent.getChildren().indexOf(brickPanel);
-            parent.getChildren().add(idx, ghostPanel);
-        }
-
-        updateGhostPanelPosition(brick);
-    }
-
-    // Legacy color mapping kept for fallback; primary styling uses CSS classes via applyTileStyle
-    private Paint getFillColor(int i) {
-        return switch (i) {
-            case 0 -> Color.TRANSPARENT;
-            case 1 -> Color.AQUA;
-            case 2 -> Color.BLUEVIOLET;
-            case 3 -> Color.DARKGREEN;
-            case 4 -> Color.YELLOW;
-            case 5 -> Color.RED;
-            case 6 -> Color.BEIGE;
-            case 7 -> Color.BURLYWOOD;
-            default -> Color.WHITE;
-        };
-    }
-
-    private void applyTileStyle(Rectangle rect, int val) {
-        rect.getStyleClass().removeIf(s -> s.startsWith("tile-"));
-        if (!rect.getStyleClass().contains("tile")) {
-            rect.getStyleClass().add("tile");
-        }
-        rect.getStyleClass().add("tile-" + Math.max(0, Math.min(7, val)));
-        if (val == 0) {
-            rect.setOpacity(1.0);
-        }
-    }
-
-    private void renderNextPreviews(ViewData data) {
-        int[][][] previews = data.getNextBricksData();
-        renderPreview(nextPanel1, previews != null && previews.length > 0 ? previews[0] : null);
-        renderPreview(nextPanel2, previews != null && previews.length > 1 ? previews[1] : null);
-        renderPreview(nextPanel3, previews != null && previews.length > 2 ? previews[2] : null);
-    }
-
-    private void renderPreview(GridPane panel, int[][] shape) {
-        if (panel == null) return;
-        panel.getChildren().clear();
-        if (shape == null) return;
-
-        for (int r = 0; r < shape.length; r++) {
-            for (int c = 0; c < shape[r].length; c++) {
-                Rectangle rect = new Rectangle(Constants.PREVIEW_TILE_SIZE, Constants.PREVIEW_TILE_SIZE);
-                rect.setArcHeight(Constants.TILE_ROUNDING);
-                rect.setArcWidth(Constants.TILE_ROUNDING);
-                applyTileStyle(rect, shape[r][c]);
-                panel.add(rect, c, r);
-            }
-        }
-    }
-
-    private void renderHoldPreview(ViewData data) {
-        if (holdPanel == null) return;
-        int[][] held = data.getHeldBrickData();
-        holdPanel.getChildren().clear();
-        if (held == null || held.length == 0) {
-            return;
-        }
-        renderPreview(holdPanel, held);
-    }
-
-    private Paint getGhostFillColor(int val) {
-        if (val == 0) return Color.TRANSPARENT;
-        return new Color(1, 1, 1, Constants.GHOST_ALPHA);
-    }
-
-    private void refreshBrick(ViewData brick) {
-
-        if (isPause.get()) return;
-
-        updateBrickPanelPosition(brick);
-
-        for (int r = 0; r < brick.getBrickData().length; r++) {
-            for (int c = 0; c < brick.getBrickData()[r].length; c++) {
-                applyTileStyle(rectangles[r][c], brick.getBrickData()[r][c]);
-            }
-        }
-
-        // Ghost: update only when enabled
-        if (isShadowEnabled) {
-            updateGhostPanelPosition(brick);
-            if (ghostRectangles != null) {
-                for (int r = 0; r < brick.getBrickData().length; r++) {
-                    for (int c = 0; c < brick.getBrickData()[r].length; c++) {
-                        ghostRectangles[r][c].setFill(getGhostFillColor(brick.getBrickData()[r][c]));
-                    }
-                }
-            }
-            if (ghostPanel != null) ghostPanel.setVisible(true);
-        } else {
-            if (ghostPanel != null) ghostPanel.setVisible(false);
-        }
-
-        // Update next previews
-        renderNextPreviews(brick);
-        // Update hold preview
-        renderHoldPreview(brick);
-    }
-
-    private void updateBrickPanelPosition(ViewData brick) {
-        double tile = Constants.TILE_SIZE + Constants.GRID_GAP;
-
-        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * tile);
-        brickPanel.setLayoutY(gamePanel.getLayoutY() +
-                (brick.getyPosition() - Constants.HIDDEN_ROWS) * tile);
-    }
-
-    private void updateGhostPanelPosition(ViewData brick) {
-        if (!isShadowEnabled || ghostPanel == null) return;
-
-        double tile = Constants.TILE_SIZE + Constants.GRID_GAP;
-
-        ghostPanel.setLayoutX(gamePanel.getLayoutX() + brick.getGhostXPosition() * tile);
-        ghostPanel.setLayoutY(gamePanel.getLayoutY() +
-                (brick.getGhostYPosition() - Constants.HIDDEN_ROWS) * tile);
-    }
-
     public void refreshGameBackground(int[][] board) {
         for (int r = Constants.HIDDEN_ROWS; r < board.length; r++) {
             for (int c = 0; c < board[r].length; c++) {
-                applyTileStyle(displayMatrix[r][c], board[r][c]);
+                TileStyleUtility.applyTileStyle(displayMatrix[r][c], board[r][c]);
             }
         }
     }
 
     private void moveDown(MoveEvent e) {
-
         if (isPause.get()) return;
-
         DownData data = eventListener.onDownEvent(e);
-
-        if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
-            NotificationPanel np = new NotificationPanel("+" + data.getClearRow().getScoreBonus());
-            groupNotification.getChildren().add(np);
-            np.showScore(groupNotification.getChildren());
-        }
-
-        refreshBrick(data.getViewData());
-        gamePanel.requestFocus();
+        handlePostDropUpdates(data);
     }
 
     private void hardDrop(MoveEvent e) {
         if (isPause.get()) return;
-
         DownData data = eventListener.onHardDropEvent(e);
+        handlePostDropUpdates(data);
+    }
 
+    /**
+     * Handles UI updates common to both soft and hard drops (score, notifications, piece/preview refresh).
+     */
+    private void handlePostDropUpdates(DownData data) {
         if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
             NotificationPanel np = new NotificationPanel("+" + data.getClearRow().getScoreBonus());
             groupNotification.getChildren().add(np);
             np.showScore(groupNotification.getChildren());
         }
 
-        refreshBrick(data.getViewData());
+        // Delegate brick and preview updates
+        ViewData brick = data.getViewData();
+        brickViewManager.refreshBrick(brick);
+        previewPanelManager.renderAllPreviews(brick);
+
         gamePanel.requestFocus();
     }
+
+    // --- Game State Management & UI Effects ---
 
     public void bindScore(IntegerProperty scoreProp) {
         scoreLabel.textProperty().bind(Bindings.format("Score: %d", scoreProp));
@@ -457,11 +283,11 @@ public class GuiController implements Initializable {
 
     public void goMainMenu(ActionEvent evt) throws IOException {
         timeline.stop();
-        Stage primaryStage = (Stage) ((Parent) evt.getSource()).getScene().getWindow();
+        // Get the stage from the event source (the button)
+        Stage primaryStage = (Stage) ((javafx.scene.Node) evt.getSource()).getScene().getWindow();
 
         URL location = getClass().getClassLoader().getResource("menuLayout.fxml");
-        ResourceBundle resources = null;
-        FXMLLoader fxmlLoader = new FXMLLoader(location, resources);
+        FXMLLoader fxmlLoader = new FXMLLoader(location);
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 600, 510);
         primaryStage.setScene(scene);
@@ -486,15 +312,9 @@ public class GuiController implements Initializable {
     }
 
     // Toggle Shadow (ghost) projection via button or 'H' key
+    // Delegates directly to the manager, but remains here for FXML binding.
     public void toggleShadow(ActionEvent evt) {
-        isShadowEnabled = !isShadowEnabled;
-        if (shadowButton != null) {
-            shadowButton.setText("Shadow: " + (isShadowEnabled ? "ON" : "OFF"));
-        }
-        if (ghostPanel != null) {
-            ghostPanel.setVisible(isShadowEnabled);
-        }
-        // Keep focus on the board for continuous keyboard controls
+        brickViewManager.toggleShadow(evt);
         gamePanel.requestFocus();
     }
 
