@@ -1,10 +1,10 @@
 package com.comp2042;
 
-import com.comp2042.ui.GuiController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -14,20 +14,23 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // Ensure custom font is loaded before creating the scene
+        Font.loadFont(getClass().getResource("/digital.ttf").toExternalForm(), 12);
 
-        URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
+        // Load the FXML file
+        URL location = getClass().getResource("/menuLayout.fxml");
         ResourceBundle resources = null;
         FXMLLoader fxmlLoader = new FXMLLoader(location, resources);
-        Parent root = fxmlLoader.load();
-        GuiController c = fxmlLoader.getController();
 
-        primaryStage.setTitle("TetrisJFX");
-        Scene scene = new Scene(root, 300, 510);
+        // Load the FXML content and create the scene
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, 600, 510);
+
+        // Set up the window
+        primaryStage.setTitle("Tetris JFX");
         primaryStage.setScene(scene);
         primaryStage.show();
-        new GameController(c);
     }
-
 
     public static void main(String[] args) {
         launch(args);

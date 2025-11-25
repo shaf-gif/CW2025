@@ -41,6 +41,11 @@
                     styleClass="primary-button"
                     onAction="#newGame" />
 
+            <Button text="MainMenu"
+                    prefWidth="80"
+                    styleClass="primary-button"
+                    onAction="#goMainMenu" />
+
             <Button fx:id="shadowButton"
                     text="Shadow: ON"
                     prefWidth="110"

@@ -11,8 +11,11 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -23,8 +26,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -42,6 +47,7 @@ public class GuiController implements Initializable {
     @FXML private GameOverPanel gameOverPanel;
     @FXML private javafx.scene.control.Label scoreLabel;
     @FXML private javafx.scene.control.Button pauseButton;
+
     // Next previews (1..3)
     @FXML private GridPane nextPanel1;
     @FXML private GridPane nextPanel2;
@@ -131,6 +137,22 @@ public class GuiController implements Initializable {
         if (keyEvent.getCode() == KeyCode.N) newGame(null);
 
         keyEvent.consume();
+
+        if(keyEvent.getCode() == KeyCode.BACK_SPACE) {
+            if (isGameOver.get()) return;
+
+            if (isPause.get()) {
+                timeline.play();
+                pauseButton.setText("Pause");
+                isPause.set(false);
+            } else {
+                timeline.pause();
+                pauseButton.setText("Resume");
+                isPause.set(true);
+            }
+
+            gamePanel.requestFocus();
+        }
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -431,6 +453,19 @@ public class GuiController implements Initializable {
 
         timeline.play();
         gamePanel.requestFocus();
+    }
+
+    public void goMainMenu(ActionEvent evt) throws IOException {
+        timeline.stop();
+        Stage primaryStage = (Stage) ((Parent) evt.getSource()).getScene().getWindow();
+
+        URL location = getClass().getClassLoader().getResource("menuLayout.fxml");
+        ResourceBundle resources = null;
+        FXMLLoader fxmlLoader = new FXMLLoader(location, resources);
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, 600, 510);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     public void pauseGame(ActionEvent evt) {
