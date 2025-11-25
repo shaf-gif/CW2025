@@ -70,3 +70,9 @@
     -fx-fill: yellow;
     -fx-text-fill: yellow;
 }
+
+.menu{
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 45;
+    -fx-text-fill: yellow;
+}
