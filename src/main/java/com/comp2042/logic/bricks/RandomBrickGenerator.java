@@ -30,10 +30,12 @@ public final class RandomBrickGenerator implements BrickGenerator {
         fresh.add(new SBrick());
         fresh.add(new TBrick());
         fresh.add(new ZBrick());
+
         // Shuffle with ThreadLocalRandom
         Collections.shuffle(fresh, ThreadLocalRandom.current());
         bag = fresh;
-        // Avoid immediate triplicate across bag boundary: if queue tail equals new bag head, rotate bag head to later
+
+        // Avoid immediate triplicate across bag boundary
         if (!nextBricks.isEmpty() && !bag.isEmpty()) {
             Brick tail = nextBricks.peekLast();
             if (tail != null && tail.getClass().equals(bag.get(0).getClass())) {
@@ -76,9 +78,11 @@ public final class RandomBrickGenerator implements BrickGenerator {
         List<Brick> result = new ArrayList<>();
         int i = 0;
         for (Brick b : nextBricks) {
+            // Only add up to 'count' pieces
             if (i++ >= count) break;
             result.add(b);
         }
-        return result;
+
+        return Collections.unmodifiableList(result);
     }
 }

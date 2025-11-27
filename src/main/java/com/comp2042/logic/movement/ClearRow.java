@@ -18,7 +18,7 @@ public final class ClearRow {
         return linesRemoved;
     }
 
-    public int[][] getNewMatrix() {
+    public int[][] getNewBoard() {
         return MatrixOperations.copy(newMatrix);
     }
 
@@ -26,3 +26,4 @@ public final class ClearRow {
         return scoreBonus;
     }
 }
+
