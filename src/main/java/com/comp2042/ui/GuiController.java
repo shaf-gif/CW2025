@@ -41,6 +41,7 @@ public class GuiController implements Initializable {
     @FXML private GridPane brickPanel; // Active piece layer
     @FXML private GameOverPanel gameOverPanel;
     @FXML private javafx.scene.control.Label scoreLabel;
+    @FXML private javafx.scene.control.Label levelLabel; // NEW: Level display
     @FXML private javafx.scene.control.Button pauseButton;
     // Next previews
     @FXML private GridPane nextPanel1;
@@ -224,6 +225,42 @@ public class GuiController implements Initializable {
         scoreLabel.textProperty().bind(Bindings.format("Score: %d", scoreProp));
     }
 
+    /**
+     * NEW: Bind the level property to the level label
+     */
+    public void bindLevel(IntegerProperty levelProp) {
+        levelLabel.textProperty().bind(Bindings.format("Level: %d", levelProp));
+    }
+
+    /**
+     * NEW: Update game speed based on current level
+     * Speed formula: baseSpeed × (0.85 ^ (level - 1))
+     * Each level increases speed by ~15%, with minimum of 50ms
+     */
+    public void updateGameSpeed(int level) {
+        if (timeline != null) {
+            timeline.stop();
+
+            // Calculate new speed based on level
+            int baseSpeed = Constants.FALL_DELAY_MS;
+            // Changed from 0.85 to 0.75 for much faster progression (25% speed increase per level)
+            double speedMultiplier = Math.pow(0.75, level - 1);
+            int newSpeed = Math.max(50, (int)(baseSpeed * speedMultiplier));
+
+            // Create new timeline with updated speed
+            timeline = new Timeline(new KeyFrame(
+                    Duration.millis(newSpeed),
+                    e -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
+            ));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+
+            // Only play if game is not paused or over
+            if (!isPause.get() && !isGameOver.get()) {
+                timeline.play();
+            }
+        }
+    }
+
     public void gameOver() {
         timeline.stop();
         isGameOver.set(true);
@@ -277,6 +314,7 @@ public class GuiController implements Initializable {
         isGameOver.set(false);
         pauseButton.setText("Pause");
 
+        // Speed will be reset via updateGameSpeed(1) call in GameController
         timeline.play();
         gamePanel.requestFocus();
     }

@@ -10,9 +10,7 @@ import com.comp2042.ui.GuiController;
 
 public class GameController implements InputEventListener {
 
-    // Board now uses your new constants-based default constructor
     private final Board board = new SimpleBoard();
-
     private final GuiController viewGuiController;
 
     public GameController(GuiController c) {
@@ -23,6 +21,7 @@ public class GameController implements InputEventListener {
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
+        viewGuiController.bindLevel(board.getScore().levelProperty());
     }
 
     @Override
@@ -36,6 +35,10 @@ public class GameController implements InputEventListener {
             clearRow = board.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
+                board.getScore().addClearedRows(clearRow.getLinesRemoved());
+
+                // Notify GUI of level change for speed adjustment
+                viewGuiController.updateGameSpeed(board.getScore().getLevel());
             }
 
             if (board.createNewBrick()) {
@@ -65,6 +68,10 @@ public class GameController implements InputEventListener {
         clearRow = board.clearRows();
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
+            board.getScore().addClearedRows(clearRow.getLinesRemoved());
+
+            // Notify GUI of level change for speed adjustment
+            viewGuiController.updateGameSpeed(board.getScore().getLevel());
         }
 
         if (board.createNewBrick()) {
@@ -104,5 +111,6 @@ public class GameController implements InputEventListener {
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        viewGuiController.updateGameSpeed(1); // Reset to level 1 speed
     }
 }
