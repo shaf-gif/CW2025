@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<VBox alignment="CENTER" spacing="3" styleClass="rootStyle"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.comp2042.ui.ControlsController">
+
+    <padding>
+        <Insets top="3" right="20" bottom="3" left="20"/>
+    </padding>
+
+    <Label text="CONTROLS" styleClass="menu" style="-fx-font-size: 24px;"/>
+
+    <GridPane hgap="15" vgap="3" alignment="CENTER">
+        <padding>
+            <Insets top="0" bottom="0"/>
+        </padding>
+
+        <Label text="KEY" styleClass="menu" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-size: 22px;"/>
+        <Label text="ACTION" styleClass="menu" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-size: 22px;"/>
+
+        <Label text="← / A" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-size: 13px;"/>
+        <Label text="Move Left" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 13px;"/>
+
+        <Label text="→ / D" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-size: 13px;"/>
+        <Label text="Move Right" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 13px;"/>
+
+        <Label text="↑ / W" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-size: 13px;"/>
+        <Label text="Rotate" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-size: 13px;"/>
+
+        <Label text="↓ / S" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-size: 13px;"/>
+        <Label text="Soft Drop" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-font-size: 13px;"/>
+
+        <Label text="SPACE" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-size: 13px;"/>
+        <Label text="Hard Drop" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-font-size: 13px;"/>
+
+        <Label text="C" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-size: 13px;"/>
+        <Label text="Hold Piece" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="6" style="-fx-font-size: 13px;"/>
+
+        <Label text="H" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-font-size: 13px;"/>
+        <Label text="Toggle Ghost Piece" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="7" style="-fx-font-size: 13px;"/>
+
+        <Label text="BACKSPACE" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="8" style="-fx-font-size: 13px;"/>
+        <Label text="Pause / Resume" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="8" style="-fx-font-size: 13px;"/>
+
+        <Label text="N" styleClass="nextBrickLabel" GridPane.columnIndex="0" GridPane.rowIndex="9" style="-fx-font-size: 13px;"/>
+        <Label text="New Game" styleClass="nextBrickLabel" GridPane.columnIndex="1" GridPane.rowIndex="9" style="-fx-font-size: 13px;"/>
+    </GridPane>
+
+    <Button text="BACK" onAction="#backToSettings" maxWidth="250" styleClass="ipad-dark-grey"/>
+
+    <stylesheets>
+        <URL value="@window_style.css"/>
+    </stylesheets>
+</VBox>
