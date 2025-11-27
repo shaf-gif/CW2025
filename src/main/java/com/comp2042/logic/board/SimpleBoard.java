@@ -249,7 +249,7 @@ public class SimpleBoard implements Board {
     public ClearRow clearRows() {
 
         ClearRow row = MatrixOperations.checkRemoving(boardMatrix);
-        boardMatrix = row.getNewMatrix();
+        boardMatrix = row.getNewBoard();
         return row;
     }
 

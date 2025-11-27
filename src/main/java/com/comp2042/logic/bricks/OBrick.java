@@ -9,12 +9,11 @@ public final class OBrick implements Brick {
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
     public OBrick() {
-
         brickMatrix.add(new int[][]{
-                {0, 4, 4, 0},
-                {0, 4, 4, 0},
-                {0, 0, 0, 0},
-                {0, 0, 0, 0}
+                {0, 0, 0, 0}, // NEW: Empty Row 0
+                {0, 4, 4, 0}, // Row 1 (The piece itself)
+                {0, 4, 4, 0}, // Row 2 (The piece itself)
+                {0, 0, 0, 0}  // Row 3
         });
     }
 
