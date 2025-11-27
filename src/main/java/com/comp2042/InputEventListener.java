@@ -20,6 +20,7 @@ public interface InputEventListener {
     // NEW for hold
     ViewData onHoldEvent(MoveEvent event);
 
+
     void createNewGame();
 }
 
