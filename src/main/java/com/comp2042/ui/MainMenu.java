@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class MainMenu {
@@ -35,8 +36,19 @@ public class MainMenu {
     }
 
     public void showLeaderboard(ActionEvent event) {
-
         System.out.println("Leaderboard button pressed.");
+    }
+
+    public void showSettings(ActionEvent event) throws IOException {
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+        URL location = getClass().getClassLoader().getResource("settingsLayout.fxml");
+        FXMLLoader fxmlLoader = new FXMLLoader(location);
+        Parent root = fxmlLoader.load();
+
+        Scene scene = new Scene(root, 600, 510);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void exitGame(ActionEvent event) {
