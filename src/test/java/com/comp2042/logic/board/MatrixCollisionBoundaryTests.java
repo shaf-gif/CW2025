@@ -1,6 +1,5 @@
-package com.comp2042.logic;
+package com.comp2042.logic.board;
 
-import com.comp2042.logic.board.MatrixOperations;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

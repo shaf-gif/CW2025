@@ -1,6 +1,5 @@
-package com.comp2042.logic; // Adjust package to match your structure
+package com.comp2042.logic.bricks; // Adjust package to match your structure
 
-import com.comp2042.logic.bricks.OBrick;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;

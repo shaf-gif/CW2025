@@ -1,6 +1,5 @@
-package com.comp2042.logic;
+package com.comp2042.logic.board;
 
-import com.comp2042.logic.board.MatrixOperations;
 import com.comp2042.logic.movement.ClearRow;
 import java.util.List;
 import java.util.ArrayList;
