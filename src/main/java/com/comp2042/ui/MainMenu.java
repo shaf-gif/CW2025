@@ -23,12 +23,10 @@ public class MainMenu implements Initializable {
     @FXML
     private Button resumeButton;
 
-    // Static variable to store the active game scene
     private static Scene activeGameScene = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Show resume button only if there's an active game
         if (activeGameScene != null && resumeButton != null) {
             resumeButton.setVisible(true);
             resumeButton.setManaged(true);
@@ -38,7 +36,7 @@ public class MainMenu implements Initializable {
     public void startGame(ActionEvent event) throws Exception {
         String playerName = nameField.getText().trim();
         if (playerName.isEmpty()) {
-            playerName = "Player"; // Will be auto-numbered if needed
+            playerName = "Player";
         }
 
         Stage primaryStage = (Stage) ((Parent) event.getSource()).getScene().getWindow();
@@ -49,13 +47,11 @@ public class MainMenu implements Initializable {
 
         GuiController c = fxmlLoader.getController();
 
-        // Pass player name to GUI controller
         c.setPlayerName(playerName);
 
         Scene gameScene = new Scene(root, 700, 495);
         primaryStage.setScene(gameScene);
 
-        // Store the game scene as active
         activeGameScene = gameScene;
 
         new GameController(c);
@@ -64,8 +60,16 @@ public class MainMenu implements Initializable {
     public void resumeGame(ActionEvent event) {
         if (activeGameScene != null) {
             Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            Parent root = activeGameScene.getRoot();
+            GuiController controller = (GuiController) root.getUserData();
+
             primaryStage.setScene(activeGameScene);
             primaryStage.show();
+
+            if (controller != null) {
+                controller.resumeFromMenu();
+            }
         }
     }
 
@@ -97,27 +101,19 @@ public class MainMenu implements Initializable {
         Platform.exit();
     }
 
-    // Static method to clear active game when game is over or new game starts
     public static void clearActiveGame() {
         activeGameScene = null;
     }
 
-    // Static method to set active game scene
     public static void setActiveGameScene(Scene scene) {
         activeGameScene = scene;
     }
 
-    // 🌟 NEW: Static method to return to the main menu (used by sub-controllers like LeaderboardController)
-    /**
-     * Loads the main menu FXML and switches the scene back to the main menu.
-     * @param stage The primary stage of the application.
-     */
     public static void returnToMainMenu(Stage stage) throws IOException {
         URL location = MainMenu.class.getClassLoader().getResource("menuLayout.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(location);
         Parent root = fxmlLoader.load();
 
-        // Ensure the size matches the menu's standard size
         Scene scene = new Scene(root, 600, 510);
         stage.setScene(scene);
         stage.show();
