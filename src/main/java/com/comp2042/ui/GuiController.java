@@ -26,12 +26,19 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import com.comp2042.logic.scoring.Score; // Import the Score class
+import com.comp2042.logic.scoring.LeaderboardManager; // Import the LeaderboardManager
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
+
+    // --- NEW: Player & Score Fields ---
+    private String playerName = "Player";
+    private Score scoreTracker; // Store reference to score
+    // ------------------------------------
 
     // --- View Components (FXML) ---
     @FXML private javafx.scene.control.Button shadowButton;
@@ -62,6 +69,16 @@ public class GuiController implements Initializable {
     // --- Refactored Managers ---
     private BrickViewManager brickViewManager;
     private PreviewPanelManager previewPanelManager;
+
+    // --- NEW: Setter Methods ---
+    public void setPlayerName(String name) {
+        this.playerName = name;
+    }
+
+    public void setScoreTracker(Score score) {
+        this.scoreTracker = score;
+    }
+    // ---------------------------
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -234,8 +251,8 @@ public class GuiController implements Initializable {
 
     /**
      * NEW: Update game speed based on current level
-     * Speed formula: baseSpeed × (0.85 ^ (level - 1))
-     * Each level increases speed by ~15%, with minimum of 50ms
+     * Speed formula: baseSpeed × (0.75 ^ (level - 1))
+     * Each level increases speed by 25%, with minimum of 50ms
      */
     public void updateGameSpeed(int level) {
         if (timeline != null) {
@@ -261,9 +278,23 @@ public class GuiController implements Initializable {
         }
     }
 
+    // --- REPLACED gameOver() METHOD ---
     public void gameOver() {
         timeline.stop();
         isGameOver.set(true);
+
+        // Save score to leaderboard
+        if (scoreTracker != null) {
+            LeaderboardManager.saveScore(
+                    playerName,
+                    scoreTracker.scoreProperty().get(),
+                    scoreTracker.getLevel(),
+                    scoreTracker.getRowsCleared()
+            );
+        }
+
+        // Clear active game when game is over
+        MainMenu.clearActiveGame();
 
         // Prepare panel for animation
         gameOverPanel.setOpacity(0);
@@ -292,9 +323,13 @@ public class GuiController implements Initializable {
         ParallelTransition pt = new ParallelTransition(fade, scale);
         pt.play();
     }
+    // ---------------------------------
 
     public void newGame(ActionEvent evt) {
         timeline.stop();
+
+        // Clear active game when starting new game
+        MainMenu.clearActiveGame();
 
         // Hide overlay and panel with quick fade
         if (overlay != null && overlay.isVisible()) {
@@ -321,8 +356,10 @@ public class GuiController implements Initializable {
 
     public void goMainMenu(ActionEvent evt) throws IOException {
         timeline.stop();
-        // Get the stage from the event source (the button)
+
+        // Store current game scene before switching
         Stage primaryStage = (Stage) ((javafx.scene.Node) evt.getSource()).getScene().getWindow();
+        MainMenu.setActiveGameScene(primaryStage.getScene());
 
         URL location = getClass().getClassLoader().getResource("menuLayout.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(location);

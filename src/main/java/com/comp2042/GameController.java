@@ -22,6 +22,9 @@ public class GameController implements InputEventListener {
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
         viewGuiController.bindLevel(board.getScore().levelProperty());
+
+        // Pass score reference for leaderboard saving
+        viewGuiController.setScoreTracker(board.getScore());
     }
 
     @Override
