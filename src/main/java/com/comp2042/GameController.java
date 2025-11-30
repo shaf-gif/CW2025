@@ -1,5 +1,6 @@
 package com.comp2042;
 
+import com.comp2042.logic.AudioManager;
 import com.comp2042.logic.board.Board;
 import com.comp2042.logic.board.SimpleBoard;
 import com.comp2042.logic.movement.ClearRow;
@@ -34,9 +35,11 @@ public class GameController implements InputEventListener {
 
         if (!canMove) {
             board.mergeBrickToBackground();
+            AudioManager.getInstance().playDrop();
 
             clearRow = board.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
+                AudioManager.getInstance().playLineClear();
                 board.getScore().add(clearRow.getScoreBonus());
                 board.getScore().addClearedRows(clearRow.getLinesRemoved());
 
@@ -67,9 +70,11 @@ public class GameController implements InputEventListener {
         } while (canMove);
 
         board.mergeBrickToBackground();
+        AudioManager.getInstance().playDrop();
 
         clearRow = board.clearRows();
         if (clearRow.getLinesRemoved() > 0) {
+            AudioManager.getInstance().playLineClear();
             board.getScore().add(clearRow.getScoreBonus());
             board.getScore().addClearedRows(clearRow.getLinesRemoved());
 
@@ -101,6 +106,7 @@ public class GameController implements InputEventListener {
     @Override
     public ViewData onRotateEvent(MoveEvent event) {
         board.rotateLeftBrick();
+        AudioManager.getInstance().playRotate();
         return board.getViewData();
     }
 

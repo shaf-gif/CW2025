@@ -1,5 +1,6 @@
 package com.comp2042.logic.board;
 
+import com.comp2042.logic.AudioManager;
 import com.comp2042.logic.Constants;
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
@@ -247,10 +248,12 @@ public class SimpleBoard implements Board {
 
     @Override
     public ClearRow clearRows() {
-
-        ClearRow row = MatrixOperations.checkRemoving(boardMatrix);
-        boardMatrix = row.getNewBoard();
-        return row;
+        ClearRow clearRow = MatrixOperations.checkRemoving(boardMatrix);
+        if (clearRow.getLinesRemoved() > 0) {
+            AudioManager.getInstance().playLineClear();
+        }
+        boardMatrix = clearRow.getNewBoard();
+        return clearRow;
     }
 
     // ----------------------------------------------------

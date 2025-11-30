@@ -1,6 +1,7 @@
 package com.comp2042.ui;
 
 import com.comp2042.GameController;
+import com.comp2042.logic.AudioManager;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -24,9 +25,15 @@ public class MainMenu implements Initializable {
     private Button resumeButton;
 
     private static Scene activeGameScene = null;
+    private AudioManager audioManager;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        audioManager = AudioManager.getInstance();
+
+        // Start menu music when main menu loads
+        audioManager.playBackgroundMusic("menu");
+
         if (activeGameScene != null && resumeButton != null) {
             resumeButton.setVisible(true);
             resumeButton.setManaged(true);
@@ -34,6 +41,8 @@ public class MainMenu implements Initializable {
     }
 
     public void startGame(ActionEvent event) throws Exception {
+        audioManager.playButtonClick();
+
         String playerName = nameField.getText().trim();
         if (playerName.isEmpty()) {
             playerName = "Player";
@@ -54,10 +63,15 @@ public class MainMenu implements Initializable {
 
         activeGameScene = gameScene;
 
+        // Switch to game music
+        audioManager.playBackgroundMusic("game");
+
         new GameController(c);
     }
 
     public void resumeGame(ActionEvent event) {
+        audioManager.playButtonClick();
+
         if (activeGameScene != null) {
             Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
@@ -67,6 +81,9 @@ public class MainMenu implements Initializable {
             primaryStage.setScene(activeGameScene);
             primaryStage.show();
 
+            // Switch back to game music
+            audioManager.playBackgroundMusic("game");
+
             if (controller != null) {
                 controller.resumeFromMenu();
             }
@@ -74,6 +91,8 @@ public class MainMenu implements Initializable {
     }
 
     public void showLeaderboard(ActionEvent event) throws IOException {
+        audioManager.playButtonClick();
+
         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
         URL location = getClass().getClassLoader().getResource("leaderboardLayout.fxml");
@@ -86,6 +105,8 @@ public class MainMenu implements Initializable {
     }
 
     public void showSettings(ActionEvent event) throws IOException {
+        audioManager.playButtonClick();
+
         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
         URL location = getClass().getClassLoader().getResource("settingsLayout.fxml");
@@ -98,6 +119,8 @@ public class MainMenu implements Initializable {
     }
 
     public void exitGame(ActionEvent event) {
+        audioManager.playButtonClick();
+        audioManager.dispose();
         Platform.exit();
     }
 
@@ -110,6 +133,9 @@ public class MainMenu implements Initializable {
     }
 
     public static void returnToMainMenu(Stage stage) throws IOException {
+        // Play button click sound
+        AudioManager.getInstance().playButtonClick();
+
         URL location = MainMenu.class.getClassLoader().getResource("menuLayout.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(location);
         Parent root = fxmlLoader.load();
@@ -117,5 +143,8 @@ public class MainMenu implements Initializable {
         Scene scene = new Scene(root, 600, 510);
         stage.setScene(scene);
         stage.show();
+
+        // Switch back to menu music
+        AudioManager.getInstance().playBackgroundMusic("menu");
     }
 }

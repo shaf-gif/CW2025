@@ -1,6 +1,7 @@
 package com.comp2042.ui;
 
 import com.comp2042.InputEventListener;
+import com.comp2042.logic.AudioManager;
 import com.comp2042.logic.Constants;
 import com.comp2042.logic.movement.*;
 import com.comp2042.model.ViewData;
@@ -124,7 +125,10 @@ public class GuiController implements Initializable {
                 case DOWN, S -> moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                 case SPACE -> hardDrop(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
                 case C -> handleMove(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
-                case H -> brickViewManager.toggleShadow(null);
+                case H -> {
+                    AudioManager.getInstance().playButtonClick();
+                    brickViewManager.toggleShadow(null);
+                }
             }
         }
 
@@ -275,6 +279,7 @@ public class GuiController implements Initializable {
     }
 
     public void newGame(ActionEvent evt) {
+        AudioManager.getInstance().playButtonClick();
         timeline.stop();
 
         MainMenu.clearActiveGame();
@@ -301,6 +306,7 @@ public class GuiController implements Initializable {
     }
 
     public void goMainMenu(ActionEvent evt) throws IOException {
+        AudioManager.getInstance().playButtonClick();
         if (!isGameOver.get()) {
             timeline.pause();
             isPause.set(true);
@@ -322,6 +328,7 @@ public class GuiController implements Initializable {
     }
 
     public void pauseGame(ActionEvent evt) {
+        AudioManager.getInstance().playButtonClick();
 
         if (isGameOver.get()) return;
 
@@ -348,6 +355,7 @@ public class GuiController implements Initializable {
     }
 
     public void toggleShadow(ActionEvent evt) {
+        AudioManager.getInstance().playButtonClick();
         brickViewManager.toggleShadow(evt);
         gamePanel.requestFocus();
     }

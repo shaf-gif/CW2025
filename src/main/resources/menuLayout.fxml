@@ -22,15 +22,15 @@
         <Label text="TETRIS JFX" styleClass="menu"/>
 
         <!-- VBox containing input fields and buttons -->
-        <VBox spacing="10" alignment="CENTER" prefWidth="350">
+        <VBox spacing="10" alignment="CENTER" prefWidth="450">
             <Label text="ENTER PLAYER NAME:" styleClass="nextBrickLabel"/>
             <TextField fx:id="nameField" promptText="Your Name" styleClass="ipad-dark-grey"/>
 
-            <Button fx:id="resumeButton" text="RESUME GAME" onAction="#resumeGame" maxWidth="Infinity" styleClass="ipad-dark-grey" visible="false" managed="false"/>
-            <Button text="START GAME" onAction="#startGame" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
-            <Button text="LEADERBOARD" onAction="#showLeaderboard" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
-            <Button text="SETTINGS" onAction="#showSettings" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
-            <Button text="EXIT" onAction="#exitGame" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
+            <Button fx:id="resumeButton" text="RESUME GAME" onAction="#resumeGame" maxWidth="Infinity" styleClass="main-menu-button" visible="false" managed="false"/>
+            <Button text="START GAME" onAction="#startGame" maxWidth="Infinity" styleClass="main-menu-button"/>
+            <Button text="LEADERBOARD" onAction="#showLeaderboard" maxWidth="Infinity" styleClass="main-menu-button"/>
+            <Button text="SETTINGS" onAction="#showSettings" maxWidth="Infinity" styleClass="main-menu-button"/>
+            <Button text="EXIT" onAction="#exitGame" maxWidth="Infinity" styleClass="main-menu-button"/>
         </VBox>
     </VBox>
 
