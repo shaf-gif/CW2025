@@ -256,10 +256,6 @@ public class SimpleBoard implements Board {
         return clearRow;
     }
 
-    // ----------------------------------------------------
-    // NEW GAME
-    // ----------------------------------------------------
-
     @Override
     public void newGame() {
         boardMatrix = new int[height][width];

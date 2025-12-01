@@ -32,6 +32,8 @@ import com.comp2042.logic.scoring.LeaderboardManager;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
@@ -54,10 +56,13 @@ public class GuiController implements Initializable {
     @FXML private GridPane holdPanel;
     @FXML private Rectangle overlay;
 
+
+
     private Rectangle[][] displayMatrix;
     private InputEventListener eventListener;
     private Timeline timeline;
 
+    private final BooleanProperty isAnimating = new SimpleBooleanProperty(false);
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
 
@@ -115,6 +120,8 @@ public class GuiController implements Initializable {
     }
 
     private void handleKeyPress(KeyEvent keyEvent) {
+
+        if(isAnimating.get()) return;
 
         if (!isPause.get() && !isGameOver.get()) {
 
@@ -185,20 +192,22 @@ public class GuiController implements Initializable {
     }
 
     private void moveDown(MoveEvent e) {
-        if (isPause.get()) return;
+        if (isPause.get() || isAnimating.get()) return;
         DownData data = eventListener.onDownEvent(e);
         handlePostDropUpdates(data);
     }
 
     private void hardDrop(MoveEvent e) {
-        if (isPause.get()) return;
+        if (isPause.get() || isAnimating.get()) return;
         DownData data = eventListener.onHardDropEvent(e);
         handlePostDropUpdates(data);
     }
 
     private void handlePostDropUpdates(DownData data) {
         if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
-            NotificationPanel np = new NotificationPanel("+" + data.getClearRow().getScoreBonus());
+            ClearRow clearRow = data.getClearRow();
+            animateLineClear(clearRow);
+            NotificationPanel np = new NotificationPanel("+" + clearRow.getScoreBonus());
             groupNotification.getChildren().add(np);
             np.showScore(groupNotification.getChildren());
         }
@@ -210,12 +219,36 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    private void animateLineClear(ClearRow clearRow) {
+        isAnimating.set(true);
+
+        List<Rectangle> whiteRects = new ArrayList<>();
+        for (int row : clearRow.getClearedRows()) {
+            Rectangle whiteRect = new Rectangle(
+                    gamePanel.getWidth(),
+                    Constants.TILE_SIZE
+            );
+            whiteRect.setStyle("-fx-fill: white;");
+            gamePanel.add(whiteRect, 0, row - Constants.HIDDEN_ROWS);
+            GridPane.setColumnSpan(whiteRect, Constants.BOARD_WIDTH);
+            whiteRects.add(whiteRect);
+        }
+
+        PauseTransition pause = new PauseTransition(Duration.millis(100));
+        pause.setOnFinished(event -> {
+            gamePanel.getChildren().removeAll(whiteRects);
+            refreshGameBackground(clearRow.getNewBoard());
+            isAnimating.set(false);
+        });
+        pause.play();
+    }
+
     public void bindScore(IntegerProperty scoreProp) {
-        scoreLabel.textProperty().bind(Bindings.format("Score: %d", scoreProp));
+        scoreLabel.textProperty().bind(Bindings.format("SCORE: %d", scoreProp));
     }
 
     public void bindLevel(IntegerProperty levelProp) {
-        levelLabel.textProperty().bind(Bindings.format("Level: %d", levelProp));
+        levelLabel.textProperty().bind(Bindings.format("LEVEL: %d", levelProp));
     }
 
     public void updateGameSpeed(int level) {

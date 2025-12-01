@@ -115,7 +115,9 @@ public final class MatrixOperations {
         // Score bonus: 1 line = 50, 2 lines = 200, 3 lines = 450, 4 lines = 800
         int scoreBonus = 50 * cleared.size() * cleared.size();
 
-        return new ClearRow(cleared.size(), newBoard, scoreBonus);
+        int[] clearedRowsArray = cleared.stream().mapToInt(i -> i).toArray();
+
+        return new ClearRow(cleared.size(), newBoard, scoreBonus, clearedRowsArray);
     }
 
     // ----------------------------------------------------------

@@ -5,9 +5,6 @@ import javafx.scene.shape.Rectangle;
 
 public class TileStyleUtility {
 
-    /**
-     * Applies the correct CSS style class to a tile based on its value (0 for empty, 1-7 for pieces).
-     */
     public static void applyTileStyle(Rectangle rect, int val) {
         rect.getStyleClass().removeIf(s -> s.startsWith("tile-"));
         if (!rect.getStyleClass().contains("tile")) {

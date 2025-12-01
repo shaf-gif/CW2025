@@ -14,10 +14,8 @@ public interface InputEventListener {
 
     ViewData onRotateEvent(MoveEvent event);
 
-    // NEW for hard drop
     DownData onHardDropEvent(MoveEvent event);
 
-    // NEW for hold
     ViewData onHoldEvent(MoveEvent event);
 
 
