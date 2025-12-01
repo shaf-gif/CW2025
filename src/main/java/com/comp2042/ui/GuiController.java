@@ -41,6 +41,7 @@ public class GuiController implements Initializable {
     private String playerName = "Player";
     private Score scoreTracker;
 
+    @FXML private Pane gameContainer;
     @FXML private javafx.scene.control.Button shadowButton;
     @FXML private BorderPane gameBoard;
     @FXML private GridPane gamePanel;
@@ -85,7 +86,7 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(this::handleKeyPress);
 
-        Pane brickPanelContainer = brickPanel.getParent() instanceof Pane ? (Pane) brickPanel.getParent() : null;
+        Pane brickPanelContainer = (Pane) brickPanel.getParent();
         brickViewManager = new BrickViewManager(brickPanel, gamePanel, shadowButton, brickPanelContainer);
         previewPanelManager = new PreviewPanelManager(nextPanel1, nextPanel2, nextPanel3, holdPanel);
 
@@ -95,6 +96,18 @@ public class GuiController implements Initializable {
         if (Constants.SHOW_GRID && gamePanel != null) {
             gamePanel.setGridLinesVisible(true);
         }
+
+        gameContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() > 0) {
+                gameContainer.setMaxWidth(newVal.doubleValue());
+            }
+        });
+        gameContainer.heightProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() > 0) {
+                gameContainer.setMaxHeight(newVal.doubleValue());
+            }
+        });
+
 
         Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
@@ -208,6 +221,7 @@ public class GuiController implements Initializable {
             ClearRow clearRow = data.getClearRow();
             animateLineClear(clearRow);
             NotificationPanel np = new NotificationPanel("+" + clearRow.getScoreBonus());
+            np.setManaged(false);
             groupNotification.getChildren().add(np);
             np.showScore(groupNotification.getChildren());
         }

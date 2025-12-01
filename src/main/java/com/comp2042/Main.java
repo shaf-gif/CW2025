@@ -14,7 +14,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Ensure custom font is loaded before creating the scene
+
         Font.loadFont(getClass().getResource("/digital.ttf").toExternalForm(), 12);
 
         // Load the FXML file
@@ -24,7 +24,7 @@ public class Main extends Application {
 
         // Load the FXML content and create the scene
         Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root, 600, 510);
+        Scene scene = new Scene(root, 550, 550);
 
         // Set up the window
         primaryStage.setTitle("Tetris JFX");
