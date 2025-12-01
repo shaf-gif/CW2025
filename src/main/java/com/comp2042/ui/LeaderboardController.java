@@ -28,9 +28,6 @@ public class LeaderboardController implements Initializable {
         displayLeaderboard();
     }
 
-    /**
-     * Loads the scores from the LeaderboardManager and renders them as HBox rows.
-     */
     private void displayLeaderboard() {
         // Clear existing dynamic entries, keeping the FXML-defined header (first child).
         if (leaderboardContainer.getChildren().size() > 1) {
@@ -45,34 +42,26 @@ public class LeaderboardController implements Initializable {
         }
     }
 
-    /**
-     * Creates an HBox representing a single row in the leaderboard table.
-     */
     private HBox createScoreRow(int rank, LeaderboardEntry entry) {
         HBox row = new HBox(10); // Spacing matches the header
         row.getStyleClass().add("leaderboard-entry");
 
-        // Rank Label (50px width)
         Label rankLabel = new Label(String.valueOf(rank));
         rankLabel.setPrefWidth(50);
         rankLabel.getStyleClass().add("nextBrickLabel");
 
-        // Player Name Label (150px width)
         Label nameLabel = new Label(entry.getPlayerName());
         nameLabel.setPrefWidth(150);
         nameLabel.getStyleClass().add("nextBrickLabel");
 
-        // Score Label (80px width)
         Label scoreLabel = new Label(String.valueOf(entry.getScore()));
         scoreLabel.setPrefWidth(80);
         scoreLabel.getStyleClass().add("nextBrickLabel");
 
-        // Level Label (60px width)
         Label levelLabel = new Label(String.valueOf(entry.getLevel()));
         levelLabel.setPrefWidth(60);
         levelLabel.getStyleClass().add("nextBrickLabel");
 
-        // Rows Cleared Label (60px width)
         Label rowsLabel = new Label(String.valueOf(entry.getRowsCleared()));
         rowsLabel.setPrefWidth(60);
         rowsLabel.getStyleClass().add("nextBrickLabel");
@@ -81,12 +70,6 @@ public class LeaderboardController implements Initializable {
         return row;
     }
 
-    // --- FXML Action Methods ---
-
-    /**
-     * Handler for the "CLEAR LEADERBOARD" button.
-     * Bound via onAction="#clearLeaderboard" in FXML.
-     */
     @FXML
     private void clearLeaderboard(ActionEvent event) {
         // Play button click sound
@@ -98,10 +81,6 @@ public class LeaderboardController implements Initializable {
         displayLeaderboard();
     }
 
-    /**
-     * Handler for the "BACK TO MENU" button.
-     * Bound via onAction="#backToMenu" in FXML.
-     */
     @FXML
     private void backToMenu(ActionEvent event) throws IOException {
         // Get the current stage from the button

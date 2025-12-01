@@ -25,7 +25,7 @@ public class ClearRowTest {
         final int lines = 0;
         final int bonus = 0;
 
-        ClearRow clearRow = new ClearRow(lines, EMPTY_MATRIX, bonus);
+        ClearRow clearRow = new ClearRow(lines, EMPTY_MATRIX, bonus, new int[0]);
 
         assertEquals(lines, clearRow.getLinesRemoved(),
                 "Lines removed should be 0 for no clear.");
@@ -40,7 +40,7 @@ public class ClearRowTest {
         final int lines = 1;
         final int bonus = 100;
 
-        ClearRow clearRow = new ClearRow(lines, DUMMY_MATRIX, bonus);
+        ClearRow clearRow = new ClearRow(lines, DUMMY_MATRIX, bonus, new int[]{2});
 
         assertEquals(1, clearRow.getLinesRemoved(),
                 "Lines removed should be 1.");
@@ -55,7 +55,7 @@ public class ClearRowTest {
         final int lines = 4;
         final int bonus = 800;
 
-        ClearRow clearRow = new ClearRow(lines, DUMMY_MATRIX, bonus);
+        ClearRow clearRow = new ClearRow(lines, DUMMY_MATRIX, bonus, new int[]{10, 11, 12, 13});
 
         assertEquals(4, clearRow.getLinesRemoved(),
                 "Lines removed should be 4.");
@@ -71,7 +71,7 @@ public class ClearRowTest {
         final int lines = 1;
         final int bonus = 100;
 
-        ClearRow clearRow = new ClearRow(lines, DUMMY_MATRIX, bonus);
+        ClearRow clearRow = new ClearRow(lines, DUMMY_MATRIX, bonus, new int[]{2});
         int[][] board1 = clearRow.getNewBoard();
 
 

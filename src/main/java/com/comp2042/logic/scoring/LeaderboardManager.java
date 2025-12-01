@@ -61,7 +61,7 @@ public class LeaderboardManager {
         // Sort and keep top entries
         Collections.sort(entries);
         if (entries.size() > MAX_ENTRIES) {
-            entries = entries.subList(0, MAX_ENTRIES);
+            entries = new ArrayList<>(entries.subList(0, MAX_ENTRIES));
         }
 
         saveLeaderboard(entries);

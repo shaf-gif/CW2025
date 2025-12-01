@@ -91,6 +91,7 @@ public class AudioManager {
         if (sound != null) {
             MediaPlayer mediaPlayer = new MediaPlayer(sound);
             mediaPlayer.setVolume(sfxVolume);
+            mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
             mediaPlayer.play();
         } else {
             System.err.println("Sound effect not found: " + effectName);

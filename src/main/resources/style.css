@@ -11,11 +11,11 @@
 
 /* Game board: simplified, neutral border (no blue tint, no glow) */
 .gameBoard {
-    -fx-border-color: rgba(255,255,255,0.6);
-    -fx-border-width: 2;
+    -fx-border-color: #3a8bd6;
+    -fx-border-width: 4;
     -fx-border-radius: 12;
     -fx-background-radius: 12;
-    -fx-effect: null;
+    -fx-effect: dropshadow(gaussian, rgba(58, 139, 214, 0.6), 3, 0.1, 0, 0); /* Lighter, tighter neon glow effect */
     -fx-padding: 4;
 }
 
@@ -31,13 +31,15 @@
 
 /* Score label: digital font, glossy dark look */
 .score-label {
-    -fx-font-family: "digital";
+    -fx-font-family: "Impact";
     -fx-font-size: 28px;
-    -fx-text-fill: #FFE066;
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+    -fx-text-fill: #FFA500;
     -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(30,30,30,0.9));
     -fx-background-radius: 10;
-    -fx-border-color: rgba(255,255,255,0.25);
-    -fx-border-width: 1.5;
+    -fx-border-color: #FF0000;
+    -fx-border-width: 2.5;
     -fx-border-radius: 10;
     -fx-padding: 8 12 8 12;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 8, 0.2, 0, 2);
@@ -45,16 +47,19 @@
 
 /* Section labels (Hold/Next) */
 .section-label {
+    -fx-font-family: "Impact";
     -fx-font-weight: bold;
-    -fx-text-fill: white;
+    -fx-font-style: italic;
+    -fx-text-fill: #FFA500;
+    -fx-font-size: 20px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 4, 0.2, 0, 1);
 }
 
 /* Preview boxes: rounded with soft inner shadow */
 .preview-box {
-    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-color: rgba(0,0,0,0.6);
     -fx-background-radius: 10;
-    -fx-border-color: rgba(255,255,255,0.5);
+    -fx-border-color: #3a8bd6;
     -fx-border-width: 1;
     -fx-border-radius: 10;
     -fx-padding: 3;
@@ -105,5 +110,7 @@
 .tile-5 { -fx-fill: linear-gradient(to bottom, #ff8a80, #e53935); }
 .tile-6 { -fx-fill: linear-gradient(to bottom, #ffe0b2, #ffb74d); }
 .tile-7 { -fx-fill: linear-gradient(to bottom, #d7ccc8, #a1887f); }
+
+
 
 /* Optional thin grid gap effect on the board tiles could be kept via GridPane hgap/vgap */

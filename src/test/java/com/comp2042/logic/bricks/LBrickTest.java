@@ -1,4 +1,4 @@
-package com.comp2042.logic;
+package com.comp2042.logic.bricks;
 
 import com.comp2042.logic.bricks.LBrick;
 import org.junit.jupiter.api.BeforeEach;

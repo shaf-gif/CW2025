@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
 <?import java.net.URL?>
-<Pane fx:controller="com.comp2042.ui.GuiController" xmlns:fx="http://javafx.com/fxml">
+<Pane fx:controller="com.comp2042.ui.GuiController" xmlns:fx="http://javafx.com/fxml" style="-fx-background-image: url('game_background.png');">
     <GridPane fx:id="brickPanel" vgap="1" hgap="1" />
 
     <BorderPane styleClass="gameBoard" fx:id="gameBoard">
@@ -19,7 +19,7 @@
         <HBox spacing="10" alignment="CENTER" prefWidth="200" prefHeight="38" styleClass="score-level-box">
 
             <Label fx:id="scoreLabel"
-                   text="Score: 0"
+                   text="SCORE: 0"
                    minWidth="0"
                    alignment="CENTER_LEFT"
                    styleClass="score-label">
@@ -28,7 +28,7 @@
             </Label>
 
             <Label fx:id="levelLabel"
-                   text="Level: 1"
+                   text="LEVEL: 1"
                    minWidth="0"
                    alignment="CENTER"
                    styleClass="score-label">
@@ -90,7 +90,7 @@
 
     <Group fx:id="groupNotification" layoutX="14" layoutY="203">
         <VBox alignment="CENTER">
-            <GameOverPanel fx:id="gameOverPanel" />
+            <GameOverPanel fx:id="gameOverPanel" visible="false" />
         </VBox>
     </Group>
 
