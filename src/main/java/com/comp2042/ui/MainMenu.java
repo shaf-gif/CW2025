@@ -58,7 +58,7 @@ public class MainMenu implements Initializable {
 
         c.setPlayerName(playerName);
 
-        Scene gameScene = new Scene(root, 700, 495);
+        Scene gameScene = new Scene(root, 700, 513);
         primaryStage.setScene(gameScene);
 
         activeGameScene = gameScene;

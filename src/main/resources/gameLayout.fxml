@@ -5,97 +5,98 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
 <?import java.net.URL?>
-<Pane fx:controller="com.comp2042.ui.GuiController" xmlns:fx="http://javafx.com/fxml" style="-fx-background-image: url('game_background.png');">
-    <GridPane fx:id="brickPanel" vgap="1" hgap="1" />
+<StackPane fx:controller="com.comp2042.ui.GuiController" xmlns:fx="http://javafx.com/fxml" style="-fx-background-image: url('game_background.png');">
+    <Pane fx:id="gameContainer">
+        <GridPane fx:id="brickPanel" vgap="1" hgap="1" />
 
-    <BorderPane styleClass="gameBoard" fx:id="gameBoard">
-        <center>
-            <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="0" layoutX="40" />
-        </center>
-    </BorderPane>
+        <BorderPane styleClass="gameBoard" fx:id="gameBoard">
+            <center>
+                <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="0" layoutX="40" />
+            </center>
+        </BorderPane>
 
-    <VBox layoutX="260" layoutY="16" spacing="6" alignment="TOP_CENTER" styleClass="side-panel">
+        <VBox layoutX="260" layoutY="16" spacing="6" alignment="TOP_CENTER" styleClass="side-panel">
 
-        <HBox spacing="10" alignment="CENTER" prefWidth="200" prefHeight="38" styleClass="score-level-box">
+            <HBox spacing="10" alignment="CENTER" prefWidth="200" prefHeight="38" styleClass="score-level-box">
 
-            <Label fx:id="scoreLabel"
-                   text="SCORE: 0"
-                   minWidth="0"
-                   alignment="CENTER_LEFT"
-                   styleClass="score-label">
-                <HBox.margin> <Insets top="4" bottom="4" left="10"/> </HBox.margin>
-                <HBox.hgrow>ALWAYS</HBox.hgrow>
-            </Label>
+                <Label fx:id="scoreLabel"
+                       text="SCORE: 0"
+                       minWidth="0"
+                       alignment="CENTER_LEFT"
+                       styleClass="score-label">
+                    <HBox.margin> <Insets top="4" bottom="4" left="10"/> </HBox.margin>
+                    <HBox.hgrow>ALWAYS</HBox.hgrow>
+                </Label>
 
-            <Label fx:id="levelLabel"
-                   text="LEVEL: 1"
-                   minWidth="0"
-                   alignment="CENTER"
-                   styleClass="score-label">
-                <HBox.margin> <Insets top="4" bottom="4" right="10"/> </HBox.margin>
-                <HBox.hgrow>ALWAYS</HBox.hgrow>
-            </Label>
-        </HBox>
-        <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="pauseButton"
-                    text="Pause"
-                    prefWidth="80"
-                    styleClass="primary-button"
-                    onAction="#pauseGame" />
+                <Label fx:id="levelLabel"
+                       text="LEVEL: 1"
+                       minWidth="0"
+                       alignment="CENTER"
+                       styleClass="score-label">
+                    <HBox.margin> <Insets top="4" bottom="4" right="10"/> </HBox.margin>
+                    <HBox.hgrow>ALWAYS</HBox.hgrow>
+                </Label>
+            </HBox>
+            <HBox spacing="20" alignment="CENTER">
+                <Button fx:id="pauseButton"
+                        text="Pause"
+                        prefWidth="80"
+                        styleClass="primary-button"
+                        onAction="#pauseGame" />
 
-            <Button text="Restart"
-                    prefWidth="80"
-                    styleClass="primary-button"
-                    onAction="#newGame" />
+                <Button text="Restart"
+                        prefWidth="80"
+                        styleClass="primary-button"
+                        onAction="#newGame" />
 
-            <Button text="MainMenu"
-                    prefWidth="80"
-                    styleClass="primary-button"
-                    onAction="#goMainMenu" />
+                <Button text="MainMenu"
+                        prefWidth="80"
+                        styleClass="primary-button"
+                        onAction="#goMainMenu" />
 
-            <Button fx:id="shadowButton"
-                    text="Shadow: ON"
-                    prefWidth="110"
-                    styleClass="toggle-button"
-                    onAction="#toggleShadow" />
-        </HBox>
+                <Button fx:id="shadowButton"
+                        text="Shadow: ON"
+                        prefWidth="110"
+                        styleClass="toggle-button"
+                        onAction="#toggleShadow" />
+            </HBox>
 
-        <VBox spacing="12" alignment="CENTER">
-            <VBox spacing="6" alignment="CENTER">
-                <Label text="Hold" styleClass="section-label" />
-                <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
-                    <GridPane fx:id="holdPanel" hgap="1" vgap="1" alignment="CENTER" />
-                </StackPane>
-            </VBox>
+            <VBox spacing="12" alignment="CENTER">
+                <VBox spacing="6" alignment="CENTER">
+                    <Label text="Hold" styleClass="section-label" />
+                    <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                        <GridPane fx:id="holdPanel" hgap="1" vgap="1" alignment="CENTER" />
+                    </StackPane>
+                </VBox>
 
-            <VBox spacing="8" alignment="CENTER">
-                <Label text="Next" styleClass="section-label" />
+                <VBox spacing="8" alignment="CENTER">
+                    <Label text="Next" styleClass="section-label" />
 
-                <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
-                    <GridPane fx:id="nextPanel1" hgap="1" vgap="1" alignment="CENTER" />
-                </StackPane>
+                    <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                        <GridPane fx:id="nextPanel1" hgap="1" vgap="1" alignment="CENTER" />
+                    </StackPane>
 
-                <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
-                    <GridPane fx:id="nextPanel2" hgap="1" vgap="1" alignment="CENTER" />
-                </StackPane>
+                    <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                        <GridPane fx:id="nextPanel2" hgap="1" vgap="1" alignment="CENTER" />
+                    </StackPane>
 
-                <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
-                    <GridPane fx:id="nextPanel3" hgap="1" vgap="1" alignment="CENTER" />
-                </StackPane>
+                    <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                        <GridPane fx:id="nextPanel3" hgap="1" vgap="1" alignment="CENTER" />
+                    </StackPane>
+                </VBox>
             </VBox>
         </VBox>
-    </VBox>
 
-    <Rectangle fx:id="overlay" visible="false" managed="false" width="300" height="510" styleClass="dim-overlay" />
+        <Rectangle fx:id="overlay" visible="false" managed="false" width="300" height="510" styleClass="dim-overlay" />
 
-    <Group fx:id="groupNotification" layoutX="14" layoutY="203">
-        <VBox alignment="CENTER">
-            <GameOverPanel fx:id="gameOverPanel" visible="false" />
-        </VBox>
-    </Group>
-
+        <Group fx:id="groupNotification" layoutX="14" layoutY="203">
+            <VBox alignment="CENTER">
+                <GameOverPanel fx:id="gameOverPanel" visible="false" />
+            </VBox>
+        </Group>
+    </Pane>
     <stylesheets>
         <URL value="@window_style.css" />
         <URL value="@style.css" />
     </stylesheets>
-</Pane>
+</StackPane>
