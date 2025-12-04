@@ -73,7 +73,7 @@ public class LeaderboardController implements Initializable {
     @FXML
     private void clearLeaderboard(ActionEvent event) {
         // Play button click sound
-        com.comp2042.logic.AudioManager.getInstance().playButtonClick();
+        AudioManager.getInstance().playButtonClick();
         // Call the static method in your manager
         com.comp2042.logic.scoring.LeaderboardManager.clearLeaderboard();
 

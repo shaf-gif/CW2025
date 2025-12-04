@@ -1,7 +1,6 @@
 package com.comp2042.ui;
 
-import com.comp2042.GameController;
-import com.comp2042.logic.AudioManager;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
