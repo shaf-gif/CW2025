@@ -1,14 +1,13 @@
 package com.comp2042.ui;
 
 import com.comp2042.InputEventListener;
-import com.comp2042.logic.AudioManager;
 import com.comp2042.logic.Constants;
 import com.comp2042.logic.movement.*;
 import com.comp2042.model.ViewData;
 import javafx.animation.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -74,7 +73,7 @@ public class GuiController implements Initializable {
         this.playerName = name;
     }
 
-    public void setScoreTracker(Score score) {
+    void setScoreTracker(Score score) {
         this.scoreTracker = score;
     }
 
@@ -167,7 +166,7 @@ public class GuiController implements Initializable {
         previewPanelManager.renderAllPreviews(brick);
     }
 
-    public void initGameView(int[][] boardMatrix, ViewData brick) {
+    void initGameView(int[][] boardMatrix, ViewData brick) {
 
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
 
@@ -196,7 +195,7 @@ public class GuiController implements Initializable {
         timeline.play();
     }
 
-    public void refreshGameBackground(int[][] board) {
+    void refreshGameBackground(int[][] board) {
         for (int r = Constants.HIDDEN_ROWS; r < board.length; r++) {
             for (int c = 0; c < board[r].length; c++) {
                 TileStyleUtility.applyTileStyle(displayMatrix[r][c], board[r][c]);
@@ -257,15 +256,15 @@ public class GuiController implements Initializable {
         pause.play();
     }
 
-    public void bindScore(IntegerProperty scoreProp) {
+    void bindScore(ReadOnlyIntegerProperty scoreProp) {
         scoreLabel.textProperty().bind(Bindings.format("SCORE: %d", scoreProp));
     }
 
-    public void bindLevel(IntegerProperty levelProp) {
+    void bindLevel(ReadOnlyIntegerProperty levelProp) {
         levelLabel.textProperty().bind(Bindings.format("LEVEL: %d", levelProp));
     }
 
-    public void updateGameSpeed(int level) {
+    void updateGameSpeed(int level) {
         if (timeline != null) {
             timeline.stop();
 
@@ -285,7 +284,7 @@ public class GuiController implements Initializable {
         }
     }
 
-    public void gameOver() {
+    void gameOver() {
         timeline.stop();
         isGameOver.set(true);
 
@@ -407,7 +406,7 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
-    public void setEventListener(InputEventListener listener) {
+    void setEventListener(InputEventListener listener) {
         this.eventListener = listener;
     }
 }

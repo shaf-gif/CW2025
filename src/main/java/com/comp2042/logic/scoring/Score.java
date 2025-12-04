@@ -1,27 +1,28 @@
 package com.comp2042.logic.scoring;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public final class Score {
 
-    private final IntegerProperty score = new SimpleIntegerProperty(0);
-    private final IntegerProperty level = new SimpleIntegerProperty(1);
-    private final IntegerProperty rowsCleared = new SimpleIntegerProperty(0);
+    private final ReadOnlyIntegerWrapper score = new ReadOnlyIntegerWrapper(0);
+    private final ReadOnlyIntegerWrapper level = new ReadOnlyIntegerWrapper(1);
+    private final ReadOnlyIntegerWrapper rowsCleared = new ReadOnlyIntegerWrapper(0);
 
-    // Rows needed to advance to next level
     private static final int ROWS_PER_LEVEL = 5;
 
-    public IntegerProperty scoreProperty() {
-        return score;
+    public ReadOnlyIntegerProperty scoreProperty() {
+        return score.getReadOnlyProperty();
     }
 
-    public IntegerProperty levelProperty() {
-        return level;
+    public ReadOnlyIntegerProperty levelProperty() {
+        return level.getReadOnlyProperty();
     }
 
-    public IntegerProperty rowsClearedProperty() {
-        return rowsCleared;
+    public ReadOnlyIntegerProperty rowsClearedProperty() {
+        return rowsCleared.getReadOnlyProperty();
     }
 
     public int getLevel() {
