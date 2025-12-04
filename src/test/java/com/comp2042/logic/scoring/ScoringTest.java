@@ -1,6 +1,5 @@
-package com.comp2042.logic;
+package com.comp2042.logic.scoring;
 
-import com.comp2042.logic.scoring.Score;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
