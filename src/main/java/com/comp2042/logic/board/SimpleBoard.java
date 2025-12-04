@@ -1,6 +1,6 @@
 package com.comp2042.logic.board;
 
-import com.comp2042.logic.AudioManager;
+import com.comp2042.ui.AudioManager;
 import com.comp2042.logic.Constants;
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;

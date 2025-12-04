@@ -1,4 +1,4 @@
-package com.comp2042.logic;
+package com.comp2042.ui;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
