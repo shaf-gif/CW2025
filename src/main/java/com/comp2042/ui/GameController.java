@@ -122,4 +122,31 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         viewGuiController.updateGameSpeed(1); // Reset to level 1 speed
     }
+
+    // New methods for Command pattern integration
+    public void moveLeft() {
+        onLeftEvent(null);
+    }
+
+    public void moveRight() {
+        onRightEvent(null);
+    }
+
+    public void moveDown() {
+        onDownEvent(null);
+    }
+
+    public void rotateClockwise() {
+        onRotateEvent(null);
+    }
+
+    public void rotateCounterClockwise() {
+        // As per current GameController, onRotateEvent is the only rotation.
+        // If distinct counter-clockwise is needed, board logic must change first.
+        onRotateEvent(null);
+    }
+
+    public void hardDrop() {
+        onHardDropEvent(null);
+    }
 }

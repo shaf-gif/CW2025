@@ -5,6 +5,7 @@ import com.comp2042.logic.Constants;
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
+import com.comp2042.logic.bricks.RandomBrickGenerationStrategy;
 import com.comp2042.logic.movement.ClearRow;
 import com.comp2042.logic.scoring.Score;
 import com.comp2042.model.NextShapeInfo;
@@ -36,7 +37,7 @@ public class SimpleBoard implements Board {
 
         boardMatrix = new int[height][width];
 
-        brickGenerator = new RandomBrickGenerator();
+        brickGenerator = new RandomBrickGenerator(new RandomBrickGenerationStrategy());
         brickRotator = new BrickRotator();
 
         score = new Score();
