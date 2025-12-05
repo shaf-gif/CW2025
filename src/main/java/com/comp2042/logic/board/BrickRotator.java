@@ -30,6 +30,9 @@ public class BrickRotator {
     }
 
     public void setCurrentShape(int newIndex) {
+        if (newIndex < 0 || newIndex >= rotations.size()) {
+            throw new IndexOutOfBoundsException("Rotation index " + newIndex + " is out of bounds for rotations size " + rotations.size());
+        }
         this.currentRotationIndex = newIndex;
     }
 }

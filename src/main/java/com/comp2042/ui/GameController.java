@@ -1,6 +1,6 @@
 package com.comp2042.ui;
 
-import com.comp2042.InputEventListener;
+import com.comp2042.logic.movement.InputEventListener;
 import com.comp2042.logic.board.Board;
 import com.comp2042.logic.board.SimpleBoard;
 import com.comp2042.logic.movement.ClearRow;
@@ -10,11 +10,12 @@ import com.comp2042.model.ViewData;
 
 public class GameController implements InputEventListener {
 
-    private final Board board = new SimpleBoard();
+    private final Board board;
     private final GuiController viewGuiController;
 
-    public GameController(GuiController c) {
+    public GameController(GuiController c, Board board) {
         this.viewGuiController = c;
+        this.board = board;
 
         board.createNewBrick();
 

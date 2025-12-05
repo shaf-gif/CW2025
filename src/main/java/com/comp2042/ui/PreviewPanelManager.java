@@ -27,14 +27,14 @@ public class PreviewPanelManager {
         renderHoldPreview(data);
     }
 
-    private void renderNextPreviews(ViewData data) {
+    void renderNextPreviews(ViewData data) {
         int[][][] previews = data.getNextBricksData();
         renderPreview(nextPanel1, previews != null && previews.length > 0 ? previews[0] : null);
         renderPreview(nextPanel2, previews != null && previews.length > 1 ? previews[1] : null);
         renderPreview(nextPanel3, previews != null && previews.length > 2 ? previews[2] : null);
     }
 
-    private void renderHoldPreview(ViewData data) {
+    void renderHoldPreview(ViewData data) {
         if (holdPanel == null) return;
         int[][] held = data.getHeldBrickData();
         holdPanel.getChildren().clear();
@@ -44,18 +44,20 @@ public class PreviewPanelManager {
         renderPreview(holdPanel, held);
     }
 
-    private void renderPreview(GridPane panel, int[][] shape) {
+    void renderPreview(GridPane panel, int[][] shape) {
         if (panel == null) return;
         panel.getChildren().clear();
         if (shape == null) return;
 
         for (int r = 0; r < shape.length; r++) {
             for (int c = 0; c < shape[r].length; c++) {
-                Rectangle rect = new Rectangle(Constants.PREVIEW_TILE_SIZE, Constants.PREVIEW_TILE_SIZE);
-                rect.setArcHeight(Constants.TILE_ROUNDING);
-                rect.setArcWidth(Constants.TILE_ROUNDING);
-                TileStyleUtility.applyTileStyle(rect, shape[r][c]);
-                panel.add(rect, c, r);
+                if (shape[r][c] != 0) { // Only add if it's not an empty tile
+                    Rectangle rect = new Rectangle(Constants.PREVIEW_TILE_SIZE, Constants.PREVIEW_TILE_SIZE);
+                    rect.setArcHeight(Constants.TILE_ROUNDING);
+                    rect.setArcWidth(Constants.TILE_ROUNDING);
+                    TileStyleUtility.applyTileStyle(rect, shape[r][c]);
+                    panel.add(rect, c, r);
+                }
             }
         }
     }

@@ -1,7 +1,5 @@
-package com.comp2042;
+package com.comp2042.logic.movement;
 
-import com.comp2042.logic.movement.DownData;
-import com.comp2042.logic.movement.MoveEvent;
 import com.comp2042.model.ViewData;
 
 public interface InputEventListener {

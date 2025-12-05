@@ -1,6 +1,6 @@
 package com.comp2042.ui;
 
-import com.comp2042.InputEventListener;
+import com.comp2042.logic.movement.InputEventListener;
 import com.comp2042.logic.Constants;
 import com.comp2042.logic.movement.*;
 import com.comp2042.model.ViewData;

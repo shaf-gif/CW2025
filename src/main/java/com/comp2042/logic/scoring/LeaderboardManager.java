@@ -4,7 +4,11 @@ import java.io.*;
 import java.util.*;
 
 public class LeaderboardManager {
-    private static final String LEADERBOARD_FILE = "leaderboard.dat";
+    private static String currentLeaderboardFile = "leaderboard.dat";
+
+    public static void setLeaderboardFileForTesting(String fileName) {
+        currentLeaderboardFile = fileName;
+    }
     private static final int MAX_ENTRIES = 10;
 
     public static class LeaderboardEntry implements Serializable, Comparable<LeaderboardEntry> {
@@ -42,6 +46,11 @@ public class LeaderboardManager {
             return Integer.compare(other.rowsCleared, this.rowsCleared);
         }
     }
+
+    public static int getMaxEntries() {
+        return MAX_ENTRIES;
+    }
+
 
     /**
      * Save a new score to the leaderboard with auto-generated player name if needed
@@ -94,7 +103,7 @@ public class LeaderboardManager {
      * Load all leaderboard entries
      */
     public static List<LeaderboardEntry> loadLeaderboard() {
-        File file = new File(LEADERBOARD_FILE);
+        File file = new File(currentLeaderboardFile);
         if (!file.exists()) {
             return new ArrayList<>();
         }
@@ -113,7 +122,7 @@ public class LeaderboardManager {
      * Save leaderboard entries to file
      */
     private static void saveLeaderboard(List<LeaderboardEntry> entries) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(LEADERBOARD_FILE))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(currentLeaderboardFile))) {
             oos.writeObject(entries);
         } catch (IOException e) {
             System.err.println("Error saving leaderboard: " + e.getMessage());
@@ -124,7 +133,7 @@ public class LeaderboardManager {
      * Clear all leaderboard entries
      */
     public static void clearLeaderboard() {
-        File file = new File(LEADERBOARD_FILE);
+        File file = new File(currentLeaderboardFile);
         if (file.exists()) {
             file.delete();
         }
