@@ -96,7 +96,6 @@ class GuiControllerTest extends JavaFxTestBase {
         when(mockGamePanel.getStyleClass()).thenReturn(mock(ObservableList.class));
         when(mockGamePanel.getChildren()).thenReturn(mock(ObservableList.class));
         when(mockGamePanel.focusedProperty()).thenReturn(mock(BooleanProperty.class)); // Added for requestFocus()
-        
         when(mockScoreLabel.textProperty()).thenReturn(mock(javafx.beans.property.StringProperty.class));
         when(mockLevelLabel.textProperty()).thenReturn(mock(javafx.beans.property.StringProperty.class));
 
@@ -123,7 +122,6 @@ class GuiControllerTest extends JavaFxTestBase {
         // General mock setup for things called in initialize
         when(mockScore.scoreProperty()).thenReturn(mockScoreProperty);
         when(mockScore.levelProperty()).thenReturn(mockLevelProperty);
-        
         // Mock getParent for brickPanel
         when(mockBrickPanel.getParent()).thenReturn(mock(Pane.class));
     }
@@ -136,7 +134,6 @@ class GuiControllerTest extends JavaFxTestBase {
             field = GuiController.class.getDeclaredField("gameContainer");
             field.setAccessible(true);
             field.set(controller, mockGameContainer);
-            
             field = GuiController.class.getDeclaredField("shadowButton");
             field.setAccessible(true);
             field.set(controller, mockShadowButton);
@@ -231,14 +228,12 @@ class GuiControllerTest extends JavaFxTestBase {
             // Verify BrickViewManager and PreviewPanelManager instantiation
             assertEquals(1, mockedConstructionBVM.constructed().size());
             assertEquals(1, mockedConstructionPPM.constructed().size());
-            
             // Verify gameOverPanel and overlay setup
             verify(mockGameOverPanel).setVisible(false);
             verify(mockOverlay).setManaged(false);
             verify(mockOverlay).setVisible(false);
             verify(mockOverlay).setOpacity(Constants.OVERLAY_OPACITY);
             verify(mockOverlay).setMouseTransparent(true);
-            
             // Verify Reflection is instantiated
             assertEquals(1, mockedConstructionReflection.constructed().size());
 

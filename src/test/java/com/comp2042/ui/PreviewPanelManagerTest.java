@@ -16,7 +16,7 @@ import org.mockito.quality.Strictness;
 import org.mockito.junit.jupiter.MockitoSettings;
 
 // Explicitly re-adding import for ViewData
-import com.comp2042.model.ViewData; 
+import com.comp2042.model.ViewData;
 import com.comp2042.JavaFxTestBase;
 
 
@@ -53,7 +53,6 @@ public class PreviewPanelManagerTest extends JavaFxTestBase {
         doNothing().when(mockNextPanel2Children).clear();
         doNothing().when(mockNextPanel3Children).clear();
         doNothing().when(mockHoldPanelChildren).clear();
-        
         // Also stub add() method to prevent UnnecessaryStubbingException or verify errors
         doAnswer(invocation -> null).when(mockNextPanel1Children).add(any(Node.class));
         doAnswer(invocation -> null).when(mockNextPanel2Children).add(any(Node.class));
@@ -92,7 +91,6 @@ public class PreviewPanelManagerTest extends JavaFxTestBase {
 
         // Spy on the manager to verify renderPreview calls
         PreviewPanelManager spyPreviewPanelManager = spy(previewPanelManager);
-        
         spyPreviewPanelManager.renderNextPreviews(mockViewData);
 
         // Verify renderPreview is called for each next panel with correct data
@@ -152,7 +150,6 @@ public class PreviewPanelManagerTest extends JavaFxTestBase {
     @Test
     void renderPreviewClearsPanelAndAddsRectanglesForShape() {
         int[][] testShape = {{1, 2}, {0, 3}}; // Sample 2x2 shape
-        
         try (MockedConstruction<Rectangle> mockedConstructionRectangle = mockConstruction(Rectangle.class);
              MockedStatic<TileStyleUtility> mockedStaticTileStyleUtility = mockStatic(TileStyleUtility.class)) {
 
@@ -160,7 +157,6 @@ public class PreviewPanelManagerTest extends JavaFxTestBase {
 
             verify(mockNextPanel1, times(1)).getChildren(); // Verify getChildren is called on the panel
             verify(mockNextPanel1Children).clear(); // Corrected verification
-            
             // Verify Rectangle construction and TileStyleUtility calls
             assertEquals(3, mockedConstructionRectangle.constructed().size()); // 3 non-zero tiles in testShape
             mockedStaticTileStyleUtility.verify(() -> TileStyleUtility.applyTileStyle(any(Rectangle.class), eq(1)), times(1));

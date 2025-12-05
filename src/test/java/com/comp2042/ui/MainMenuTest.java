@@ -78,7 +78,6 @@ class MainMenuTest extends JavaFxTestBase {
         Field activeGameSceneField = MainMenu.class.getDeclaredField("activeGameScene");
         activeGameSceneField.setAccessible(true);
         activeGameSceneField.set(null, null); // Set to null before each test
-        
         when(mockActionEvent.getSource()).thenReturn(mock(javafx.scene.Parent.class));
         when(((javafx.scene.Node) mockActionEvent.getSource()).getScene()).thenReturn(mockGameScene);
         when(mockGameScene.getWindow()).thenReturn(mockStage);
@@ -125,10 +124,10 @@ class MainMenuTest extends JavaFxTestBase {
         when(mockNameField.getText()).thenReturn("TestPlayer");
 
         try (MockedConstruction<FXMLLoader> mockedConstructionFXMLLoader = mockConstruction(FXMLLoader.class,
-                     (mock, context) -> {
-                         when(mock.load()).thenReturn(mockRoot);
-                         when(mock.getController()).thenReturn(mockGuiController);
-                     });
+                (mock, context) -> {
+                    when(mock.load()).thenReturn(mockRoot);
+                    when(mock.getController()).thenReturn(mockGuiController);
+                });
              MockedConstruction<Scene> mockedConstructionScene = mockConstruction(Scene.class);
              MockedConstruction<GameController> mockedConstructionGameController = mockConstruction(GameController.class);
              MockedConstruction<SimpleBoard> mockedConstructionSimpleBoard = mockConstruction(SimpleBoard.class)
@@ -165,11 +164,10 @@ class MainMenuTest extends JavaFxTestBase {
     }
 
     @Test
-    void showLeaderboardLoadsLeaderboardScene() throws IOException {
         try (MockedConstruction<FXMLLoader> mockedConstructionFXMLLoader = mockConstruction(FXMLLoader.class,
-                     (mock, context) -> {
-                         when(mock.load()).thenReturn(mockRoot);
-                     });
+                (mock, context) -> {
+                    when(mock.load()).thenReturn(mockRoot);
+                });
              MockedConstruction<Scene> mockedConstructionScene = mockConstruction(Scene.class)
         ) {
             mainMenu.showLeaderboard(mockActionEvent);
@@ -185,9 +183,9 @@ class MainMenuTest extends JavaFxTestBase {
     @Test
     void showSettingsLoadsSettingsScene() throws IOException {
         try (MockedConstruction<FXMLLoader> mockedConstructionFXMLLoader = mockConstruction(FXMLLoader.class,
-                     (mock, context) -> {
-                         when(mock.load()).thenReturn(mockRoot);
-                     });
+                (mock, context) -> {
+                    when(mock.load()).thenReturn(mockRoot);
+                });
              MockedConstruction<Scene> mockedConstructionScene = mockConstruction(Scene.class)
         ) {
             mainMenu.showSettings(mockActionEvent);
@@ -233,9 +231,9 @@ class MainMenuTest extends JavaFxTestBase {
     @Test
     void returnToMainMenuNavigatesAndPlaysMenuMusic() throws IOException {
         try (MockedConstruction<FXMLLoader> mockedConstructionFXMLLoader = mockConstruction(FXMLLoader.class,
-                     (mock, context) -> {
-                         when(mock.load()).thenReturn(mockRoot);
-                     });
+                (mock, context) -> {
+                    when(mock.load()).thenReturn(mockRoot);
+                });
              MockedConstruction<Scene> mockedConstructionScene = mockConstruction(Scene.class)
         ) {
             clearInvocations(mockAudioManager); // Clear invocations from setUp()
