@@ -8,23 +8,12 @@ import javafx.scene.control.Label;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import com.comp2042.JavaFxTestBase;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class NotificationPanelTest {
-
-    // Set up JavaFX environment for testing
-    @BeforeEach
-    void setUp() {
-        // Initialize JavaFX toolkit if not already initialized
-        // This is a common workaround for testing JavaFX components without a full application launch
-        try {
-            javafx.application.Platform.startup(() -> {});
-        } catch (IllegalStateException e) {
-            // Toolkit already initialized, do nothing
-        }
-    }
+class NotificationPanelTest extends JavaFxTestBase {
 
     @Test
     void testConstructorSetsTextAndStyle() {

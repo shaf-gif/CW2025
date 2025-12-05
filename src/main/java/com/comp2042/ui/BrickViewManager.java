@@ -163,4 +163,8 @@ public class BrickViewManager {
             ghostPanel.setVisible(isShadowEnabled);
         }
     }
+
+    public boolean isShadowEnabled() {
+        return isShadowEnabled;
+    }
 }

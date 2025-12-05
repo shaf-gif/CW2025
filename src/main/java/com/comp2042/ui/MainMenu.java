@@ -59,13 +59,14 @@ public class MainMenu implements Initializable {
 
         Scene gameScene = new Scene(root, 700, 513);
         primaryStage.setScene(gameScene);
+        primaryStage.show();
 
         activeGameScene = gameScene;
 
         // Switch to game music
         audioManager.playBackgroundMusic("game");
 
-        new GameController(c);
+        new GameController(c, new com.comp2042.logic.board.SimpleBoard());
     }
 
     public void resumeGame(ActionEvent event) {
