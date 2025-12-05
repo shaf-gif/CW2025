@@ -22,29 +22,46 @@ public class AudioManager {
     private static final String PIECE_DROP = "/audio/drop.wav";
         private static final String LINE_CLEAR = "/audio/line_clear.wav";
         private static final String ROTATE_SOUND = "/audio/rotate.wav";
-        private AudioManager() {
-            soundEffects = new HashMap<>();
-            loadSoundEffects();
+    private final MediaPlayerFactory mediaPlayerFactory;
+
+    private AudioManager(MediaPlayerFactory mediaPlayerFactory) {
+        this.mediaPlayerFactory = mediaPlayerFactory;
+        soundEffects = new HashMap<>();
+        loadSoundEffects();
+    }
+
+    public static synchronized AudioManager getInstance() {
+        if (instance == null) {
+            instance = new AudioManager(new DefaultMediaPlayerFactory());
         }
-    
-        public static AudioManager getInstance() {
-            if (instance == null) {
-                instance = new AudioManager();
-            }
-            return instance;
+        return instance;
+    }
+
+    public static synchronized AudioManager getInstance(MediaPlayerFactory factory) {
+        if (instance == null) {
+            instance = new AudioManager(factory);
         }
-    
-        private void loadSoundEffects() {
-            loadSoundEffect("button_click", BUTTON_CLICK);
-            loadSoundEffect("drop", PIECE_DROP);
-            loadSoundEffect("line_clear", LINE_CLEAR);
-            loadSoundEffect("rotate", ROTATE_SOUND);
+        return instance;
+    }
+
+    public static synchronized void resetInstance() {
+        if (instance != null) {
+            instance.dispose();
+            instance = null;
         }
-        private void loadSoundEffect(String name, String path) {
+    }
+
+    private void loadSoundEffects() {
+        loadSoundEffect("button_click", BUTTON_CLICK);
+        loadSoundEffect("drop", PIECE_DROP);
+        loadSoundEffect("line_clear", LINE_CLEAR);
+        loadSoundEffect("rotate", ROTATE_SOUND);
+    }
+    private void loadSoundEffect(String name, String path) {
         try {
-            URL resource = getClass().getResource(path);
+            URL resource = mediaPlayerFactory.getResource(path);
             if (resource != null) {
-                Media sound = new Media(resource.toString());
+                Media sound = mediaPlayerFactory.createMedia(resource.toString());
                 soundEffects.put(name, sound);
             } else {
                 System.err.println("Could not find audio file: " + path);
@@ -59,10 +76,10 @@ public class AudioManager {
         if (!musicEnabled) return;
         try {
             String musicPath = musicType.equals("menu") ? MENU_MUSIC : GAME_MUSIC;
-            URL resource = getClass().getResource(musicPath);
+            URL resource = mediaPlayerFactory.getResource(musicPath);
             if (resource != null) {
-                Media music = new Media(resource.toString());
-                backgroundMusicPlayer = new MediaPlayer(music);
+                Media music = mediaPlayerFactory.createMedia(resource.toString());
+                backgroundMusicPlayer = mediaPlayerFactory.createMediaPlayer(music);
                 backgroundMusicPlayer.setVolume(musicVolume);
                 backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
                 backgroundMusicPlayer.play();
@@ -89,7 +106,7 @@ public class AudioManager {
 
         Media sound = soundEffects.get(effectName);
         if (sound != null) {
-            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            MediaPlayer mediaPlayer = mediaPlayerFactory.createMediaPlayer(sound);
             mediaPlayer.setVolume(sfxVolume);
             mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
             mediaPlayer.play();
@@ -155,5 +172,10 @@ public class AudioManager {
     public void dispose() {
         stopBackgroundMusic();
         soundEffects.clear();
+    }
+
+    // For testing purposes only, allows injecting a mock instance
+    public static void setInstanceForTest(AudioManager testInstance) {
+        instance = testInstance;
     }
 }

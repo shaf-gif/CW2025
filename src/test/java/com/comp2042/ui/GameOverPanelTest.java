@@ -1,21 +1,20 @@
 package com.comp2042.ui;
 
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import org.junit.jupiter.api.BeforeEach;
+import javafx.stage.Stage;
+import com.comp2042.JavaFxTestBase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.quality.Strictness;
 import org.mockito.junit.jupiter.MockitoSettings;
-import com.comp2042.JavaFxTestBase;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT) // Suppress UnnecessaryStubbingException
@@ -23,29 +22,28 @@ class GameOverPanelTest extends JavaFxTestBase {
 
     private GameOverPanel gameOverPanel;
 
-    @Mock
-    private Label mockLabel;
-
     @Test
-    void constructorInitializesCorrectly() {
-        try (MockedConstruction<Label> mockedConstructionLabel = mockConstruction(Label.class,
-                (mock, context) -> {
-                    when(mock.getStyleClass()).thenReturn(mock(ObservableList.class));
-                    // Check if the constructor argument for Label is "GAME OVER"
-                    assertEquals("GAME OVER", context.arguments().get(0));
-                })) {
+    void constructorInitializesCorrectly() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
 
+        Platform.runLater(() -> {
             gameOverPanel = new GameOverPanel();
+            // To properly initialize the panel, it needs to be in a scene and a stage
+            Stage stage = new Stage();
+            Scene scene = new Scene(gameOverPanel, 200, 200);
+            stage.setScene(scene);
+            // Do not call stage.show() to prevent the window from appearing during tests.
+            // The component is sufficiently initialized for testing by being in a scene.
 
-            // Verify a Label was constructed
-            assertEquals(1, mockedConstructionLabel.constructed().size());
-            Label constructedLabel = mockedConstructionLabel.constructed().get(0);
+            latch.countDown();
+        });
 
-            // Verify the Label's style class was set
-            verify(constructedLabel.getStyleClass()).add("gameOverStyle");
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
-            // Verify the constructed label was set as the center of the BorderPane
-            assertEquals(constructedLabel, gameOverPanel.getCenter());
-        }
+        assertNotNull(gameOverPanel);
+        assertTrue(gameOverPanel.getCenter() instanceof Label);
+        Label label = (Label) gameOverPanel.getCenter();
+        assertEquals("GAME OVER", label.getText());
+        assertTrue(label.getStyleClass().contains("gameOverStyle"));
     }
 }
