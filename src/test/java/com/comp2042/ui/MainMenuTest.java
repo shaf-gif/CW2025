@@ -164,6 +164,7 @@ class MainMenuTest extends JavaFxTestBase {
     }
 
     @Test
+    void showLeaderboardLoadsLeaderboardScene() throws IOException {
         try (MockedConstruction<FXMLLoader> mockedConstructionFXMLLoader = mockConstruction(FXMLLoader.class,
                 (mock, context) -> {
                     when(mock.load()).thenReturn(mockRoot);

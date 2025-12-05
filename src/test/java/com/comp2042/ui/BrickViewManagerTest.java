@@ -52,7 +52,6 @@ public class BrickViewManagerTest extends JavaFxTestBase {
         when(mockBrickPanel.getStyleClass()).thenReturn(mock(ObservableList.class));
         when(mockBrickPanel.getChildren()).thenReturn(mockBrickPanelChildren);
         when(mockParentPane.getChildren()).thenReturn(mockParentPaneChildren);
-<<<<<<< HEAD
         when(mockParentPaneChildren.indexOf(mockBrickPanel)).thenReturn(0);
 
         // Mock gamePanel layout properties for position calculations
@@ -90,35 +89,33 @@ public class BrickViewManagerTest extends JavaFxTestBase {
                  // Configure the mock Rectangle to return a mock ObservableMap for getProperties()
                  when(mock.getProperties()).thenReturn(mock(ObservableMap.class));
              });
-             MockedConstruction<GridPane> mockedGridPaneConstruction = mockConstruction(GridPane.class, (mock, context) -> {
-<<<<<<< HEAD
-                 // Configure mock GridPane to return mock ObservableList for children
-                 when(mock.getChildren()).thenReturn(mock(ObservableList.class));
-                 when(mock.getStyleClass()).thenReturn(mock(ObservableList.class));
-                 when(mock.getProperties()).thenReturn(mock(ObservableMap.class));
-             })) {
-<<<<<<< HEAD
-            
-            // Mock behavior for createTile's call to TileStyleUtility.applyTileStyle
-            mockedStatic.when(() -> TileStyleUtility.applyTileStyle(any(Rectangle.class), anyInt()))
-                    .thenAnswer(invocation -> null); // Does nothing
-
-            brickViewManager.initDrawBricks(mockViewData);
-
-            verify(mockBrickPanelChildren).clear();
-            // Expect 1 Rectangle for the active brick, 1 for the ghost brick (for a 1x1 brick)
-            // Constructor of Rectangle is called twice for a 1x1 brick (once for active, once for ghost)
-<<<<<<< HEAD
-            assertEquals(2, mockedConstructionRectangle.constructed().size());
-            
-            // Verifying the addition to brickPanel
-            verify(mockBrickPanel, times(1)).add(any(Rectangle.class), anyInt(), anyInt()); 
-            // The ghostPanel is added to parentPane, not brickPanelChildren
-            verify(mockParentPaneChildren, times(1)).add(eq(0), any(GridPane.class));
-
-            // Verify that createTile was called for both active and ghost bricks
-            // Total calls to TileStyleUtility.applyTileStyle will be 2 (one for active, one for ghost) for a 1x1 brick
-            mockedStatic.verify(() -> TileStyleUtility.applyTileStyle(any(Rectangle.class), anyInt()), times(2));
-        }
-    }
-}
+                          MockedConstruction<GridPane> mockedGridPaneConstruction = mockConstruction(GridPane.class, (mock, context) -> {
+                              // Configure mock GridPane to return mock ObservableList for children
+                              when(mock.getChildren()).thenReturn(mock(ObservableList.class));
+                              when(mock.getStyleClass()).thenReturn(mock(ObservableList.class));
+                              when(mock.getProperties()).thenReturn(mock(ObservableMap.class));
+                          })) {
+                         
+                         // Mock behavior for createTile's call to TileStyleUtility.applyTileStyle
+                         mockedStatic.when(() -> TileStyleUtility.applyTileStyle(any(Rectangle.class), anyInt()))
+                                 .thenAnswer(invocation -> null); // Does nothing
+             
+                         brickViewManager.initDrawBricks(mockViewData);
+             
+                         verify(mockBrickPanelChildren).clear();
+                         // Expect 1 Rectangle for the active brick, 1 for the ghost brick (for a 1x1 brick)
+                         // Constructor of Rectangle is called twice for a 1x1 brick (once for active, once for ghost)
+                         assertEquals(2, mockedConstructionRectangle.constructed().size());
+                         
+                         // Verifying the addition to brickPanel
+                         verify(mockBrickPanel, times(1)).add(any(Rectangle.class), anyInt(), anyInt()); 
+                         // The ghostPanel is added to parentPane, not brickPanelChildren
+                         verify(mockParentPaneChildren, times(1)).add(eq(0), any(GridPane.class));
+             
+                         // Verify that createTile was called for both active and ghost bricks
+                         // Total calls to TileStyleUtility.applyTileStyle will be 2 (one for active, one for ghost) for a 1x1 brick
+                         mockedStatic.verify(() -> TileStyleUtility.applyTileStyle(any(Rectangle.class), anyInt()), times(2));
+                     }
+                 }
+             }
+             
