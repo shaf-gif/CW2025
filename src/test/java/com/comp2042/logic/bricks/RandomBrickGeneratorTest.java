@@ -4,102 +4,93 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.comp2042.logic.bricks.BrickType;
+import com.comp2042.logic.scoring.Score;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-// Note: Because Collections.shuffle uses Random internally, and Mockito cannot easily mock
-// ThreadLocalRandom, we will test the structural integrity and boundary conditions,
-// assuming the built-in Java shuffle works correctly.
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RandomBrickGeneratorTest {
 
     private RandomBrickGenerator generator;
+    private Score mockScore;
 
     @BeforeEach
     void setUp() {
-        // Initialize the generator. This automatically fills the first bag and queue.
-        generator = new RandomBrickGenerator();
+        mockScore = mock(Score.class);
+        generator = new RandomBrickGenerator(mockScore);
     }
 
-    // ----------------------------------------------------
-    // INITIALIZATION & QUEUE MANAGEMENT TESTS
-    // ----------------------------------------------------
+
 
     @Test
     void testInitialQueueSizeIsPrefilled() {
-        // The constructor calls ensureQueueSize(3)
-        // Since getBrick() advances the queue, we use peekNext to check size.
-        List<Brick> initialPeek = generator.peekNext(10); // Peek well past 3
-
-        // Initial queue size must be at least 3, and the first bag is 7 pieces total.
-        // It's possible the entire first bag (7 pieces) is immediately pulled into the queue.
-        // We verify that the first 3 pieces are present.
+        when(mockScore.getLevel()).thenReturn(3);
+        List<Brick> initialPeek = generator.peekNext(10);
         assertTrue(initialPeek.size() >= 3, "Initial queue must be prefilled to at least size 3.");
     }
 
     @Test
     void testGetBrickAdvancesQueueAndRefills() {
-        // Get the first piece and note its type
+        when(mockScore.getLevel()).thenReturn(3);
         Brick firstPiece = generator.getBrick();
-
-        // Get the second piece
         Brick secondPiece = generator.getBrick();
 
-        // After two generations, the queue should still have at least 3 pieces ready (3 + 2 generated - 2 consumed = 3)
         assertEquals(3, generator.peekNext(3).size(), "Queue size should be maintained at 3 or more after generation.");
-
-        // Ensure the two generated pieces are different objects
         assertNotSame(firstPiece, secondPiece, "Generated pieces must be unique objects.");
     }
 
-    // ----------------------------------------------------
-    // BAG INTEGRITY TESTS
-    // ----------------------------------------------------
-
     @Test
     void testBagContainsAllSevenTypes() {
-        Set<Class<? extends Brick>> typesGenerated = new HashSet<>();
+        when(mockScore.getLevel()).thenReturn(3);
+        Set<BrickType> typesGenerated = new HashSet<>();
+        boolean slowBrickFound = false;
 
-        // FIX: Consume enough pieces to guarantee at least one full bag cycle (7 pieces)
-        // The queue starts with a few, so we pull 10 to ensure we hit a refill.
-        for (int i = 0; i < 10; i++) {
-            typesGenerated.add(generator.getBrick().getClass());
+        for (int i = 0; i < 50; i++) {
+            Brick brick = generator.getBrick();
+            typesGenerated.add(brick.getBrickType());
+            if (brick.getBrickType() == BrickType.SLOW) {
+                slowBrickFound = true;
+            }
         }
 
-        // Still check for all 7 types, as the system MUST produce them
-        assertEquals(7, typesGenerated.size(),
-                "Generating pieces must yield all 7 unique types (confirms 7-bag works).");
+        assertTrue(typesGenerated.size() >= 7,
+                "Should generate at least 7 unique brick types (standard Tetris pieces).");
+        assertTrue(typesGenerated.contains(BrickType.I));
+        assertTrue(typesGenerated.contains(BrickType.J));
+        assertTrue(typesGenerated.contains(BrickType.L));
+        assertTrue(typesGenerated.contains(BrickType.O));
+        assertTrue(typesGenerated.contains(BrickType.S));
+        assertTrue(typesGenerated.contains(BrickType.T));
+        assertTrue(typesGenerated.contains(BrickType.Z));
+        assertTrue(slowBrickFound, "SlowBrick should be generated at least once over many iterations.");
     }
-
-    // ----------------------------------------------------
-    // PEEKING TESTS
-    // ----------------------------------------------------
 
     @Test
     void testPeekReturnsCorrectCount() {
-        // Request 5 pieces
+        when(mockScore.getLevel()).thenReturn(3);
         List<Brick> peeked = generator.peekNext(5);
         assertEquals(5, peeked.size(), "Peek must return the requested count of 5.");
     }
 
     @Test
     void testPeekDoesNotAdvanceQueue() {
-        // Get the first peeked piece's class
+        when(mockScore.getLevel()).thenReturn(3);
         Class<? extends Brick> firstPeekedType = generator.peekNext(1).get(0).getClass();
-
-        // Generate the piece (advance the queue)
         Class<? extends Brick> generatedType = generator.getBrick().getClass();
 
-        // Verify the piece returned by getBrick was indeed the first one peeked
         assertEquals(firstPeekedType, generatedType,
                 "getBrick must return the piece that was at the head of the queue.");
 
-        // Now, peek the next piece. It should be the second piece from the initial sequence.
         Class<? extends Brick> secondPeekedType = generator.peekNext(1).get(0).getClass();
 
         assertNotEquals(generatedType, secondPeekedType,
@@ -108,11 +99,48 @@ public class RandomBrickGeneratorTest {
 
     @Test
     void testPeekReturnsImmutableList() {
+        when(mockScore.getLevel()).thenReturn(3);
         List<Brick> peeked = generator.peekNext(3);
-
-        // Verify that the list is unmodifiable (or at least throws an exception if we try to clear it)
         assertThrows(UnsupportedOperationException.class, () -> {
             peeked.clear();
         }, "The list returned by peekNext should be immutable.");
+    }
+    
+    @Test
+    void testSlowBrickGenerationProbability() {
+        when(mockScore.getLevel()).thenReturn(3);
+
+        int totalGenerations = 1000;
+        int slowBrickCount = 0;
+        double expectedChance = 0.1;
+        double tolerance = 0.05;
+
+        for (int i = 0; i < totalGenerations; i++) {
+            if (generator.getBrick().getBrickType() == BrickType.SLOW) {
+                slowBrickCount++;
+            }
+        }
+
+        double actualChance = (double) slowBrickCount / totalGenerations;
+
+        assertTrue(actualChance >= expectedChance - tolerance && actualChance <= expectedChance + tolerance,
+                String.format("SlowBrick generation probability (%.2f) should be around %.2f (tolerance %.2f)",
+                        actualChance, expectedChance, tolerance));
+    }
+
+    @Test
+    void testSlowBrickGenerationNoPriorToLevel3() {
+        when(mockScore.getLevel()).thenReturn(1);
+
+        int totalGenerations = 100;
+        int slowBrickCount = 0;
+
+        for (int i = 0; i < totalGenerations; i++) {
+            if (generator.getBrick().getBrickType() == BrickType.SLOW) {
+                slowBrickCount++;
+            }
+        }
+
+        assertEquals(0, slowBrickCount, "No SlowBricks should be generated when level is below 3.");
     }
 }

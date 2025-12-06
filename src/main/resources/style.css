@@ -110,6 +110,44 @@
 .tile-5 { -fx-fill: linear-gradient(to bottom, #ff8a80, #e53935); }
 .tile-6 { -fx-fill: linear-gradient(to bottom, #ffe0b2, #ffb74d); }
 .tile-7 { -fx-fill: linear-gradient(to bottom, #d7ccc8, #a1887f); }
+.tile-8 { -fx-fill: linear-gradient(to bottom, #b39ddb, #673ab7); } /* SlowBrick color (Purple) */
+
+/* Notification label for slow mode (or other temporary messages) */
+.notification-label {
+    -fx-font-family: "Impact";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFD700; /* Gold color for visibility */
+    -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(40,40,40,0.8));
+    -fx-background-radius: 8;
+    -fx-border-color: #FFD700;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-padding: 5 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.1, 0, 1);
+    -fx-alignment: CENTER;
+}
+
+/* Slow Mode Indicator */
+.slow-mode-indicator {
+    -fx-font-family: "Impact";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #555555; /* Inactive color (dark gray) */
+    -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(20,20,20,0.6));
+    -fx-background-radius: 8;
+    -fx-border-color: #777777;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-padding: 5 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.1, 0, 1);
+    -fx-alignment: CENTER;
+}
+
+.slow-mode-indicator.active {
+    -fx-text-fill: #00FF00; /* Active color (green) */
+    -fx-border-color: #00AA00;
+}
 
 
 

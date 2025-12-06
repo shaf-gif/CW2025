@@ -47,4 +47,9 @@ public final class JBrick implements Brick {
     public List<int[][]> getShapeMatrix() {
         return MatrixOperations.deepCopyList(brickMatrix);
     }
+
+    @Override
+    public BrickType getBrickType() {
+        return BrickType.J;
+    }
 }

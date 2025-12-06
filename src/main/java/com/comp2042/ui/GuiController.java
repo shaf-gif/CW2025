@@ -55,7 +55,7 @@ public class GuiController implements Initializable {
     @FXML private GridPane nextPanel3;
     @FXML private GridPane holdPanel;
     @FXML private Rectangle overlay;
-
+    @FXML private javafx.scene.control.Label slowModeIndicator; // Added for slow mode visual feedback
 
 
     private Rectangle[][] displayMatrix;
@@ -68,6 +68,12 @@ public class GuiController implements Initializable {
 
     private BrickViewManager brickViewManager;
     private PreviewPanelManager previewPanelManager;
+
+    // Slow Mode fields
+    private boolean slowModeActive = false;
+    private long slowModeEndTime = 0L;
+    private static final long SLOW_MODE_DURATION_MS = 8000; // 8 seconds
+    private static final double SLOW_MODE_SPEED_MULTIPLIER = 3.0; // Half speed (i.e., 2x delay)
 
     public void setPlayerName(String name) {
         this.playerName = name;
@@ -91,6 +97,11 @@ public class GuiController implements Initializable {
 
         gameOverPanel.setVisible(false);
         setupOverlay();
+        if (slowModeIndicator != null) {
+            slowModeIndicator.setText("SLOW MODE UNACTIVE");
+            slowModeIndicator.getStyleClass().clear(); // Clear existing classes
+            slowModeIndicator.getStyleClass().add("slow-mode-indicator"); // Add base class
+        }
 
         if (Constants.SHOW_GRID && gamePanel != null) {
             gamePanel.setGridLinesVisible(true);
@@ -264,13 +275,40 @@ public class GuiController implements Initializable {
         levelLabel.textProperty().bind(Bindings.format("LEVEL: %d", levelProp));
     }
 
+    void activateSlowMode() {
+        slowModeActive = true;
+        slowModeEndTime = System.currentTimeMillis() + SLOW_MODE_DURATION_MS;
+        if (slowModeIndicator != null) {
+            slowModeIndicator.setText("SLOW MODE ACTIVE");
+            slowModeIndicator.getStyleClass().clear(); // Clear existing classes
+            slowModeIndicator.getStyleClass().add("slow-mode-indicator"); // Add base class
+            slowModeIndicator.getStyleClass().add("active"); // Add active class
+        }
+        // GameController will call updateGameSpeed after this, so no need to call here
+    }
+
     void updateGameSpeed(int level) {
         if (timeline != null) {
             timeline.stop();
 
+            // Check if slow mode has expired
+            if (slowModeActive && System.currentTimeMillis() > slowModeEndTime) {
+                slowModeActive = false;
+                if (slowModeIndicator != null) {
+                    slowModeIndicator.setText("SLOW MODE UNACTIVE");
+                    slowModeIndicator.getStyleClass().clear(); // Clear existing classes
+                    slowModeIndicator.getStyleClass().add("slow-mode-indicator"); // Add base class
+                }
+            }
+
             int baseSpeed = Constants.FALL_DELAY_MS;
             double speedMultiplier = Math.pow(0.75, level - 1);
-            int newSpeed = Math.max(50, (int)(baseSpeed * speedMultiplier));
+            int currentCalculatedSpeed = Math.max(50, (int)(baseSpeed * speedMultiplier));
+            int newSpeed = currentCalculatedSpeed;
+
+            if (slowModeActive) {
+                newSpeed = (int)(currentCalculatedSpeed * SLOW_MODE_SPEED_MULTIPLIER); // Make it slower (increase delay)
+            }
 
             timeline = new Timeline(new KeyFrame(
                     Duration.millis(newSpeed),
@@ -345,6 +383,13 @@ public class GuiController implements Initializable {
         eventListener.createNewGame();
         isPause.set(false);
         isGameOver.set(false);
+        slowModeActive = false; // Reset slow mode on new game
+        slowModeEndTime = 0L;
+        if (slowModeIndicator != null) { // Ensure slowModeIndicator is hidden
+            slowModeIndicator.setText("SLOW MODE UNACTIVE");
+            slowModeIndicator.getStyleClass().clear(); // Clear existing classes
+            slowModeIndicator.getStyleClass().add("slow-mode-indicator"); // Add base class
+        }
         pauseButton.setText("Pause");
 
         timeline.play();
@@ -352,25 +397,9 @@ public class GuiController implements Initializable {
     }
 
     public void goMainMenu(ActionEvent evt) throws IOException {
-        AudioManager.getInstance().playButtonClick();
-        if (!isGameOver.get()) {
-            timeline.pause();
-            isPause.set(true);
-            pauseButton.setText("Resume");
-        }
-
         Stage primaryStage = (Stage) ((javafx.scene.Node) evt.getSource()).getScene().getWindow();
 
-        primaryStage.getScene().getRoot().setUserData(this);
-
-        MainMenu.setActiveGameScene(primaryStage.getScene());
-
-        URL location = getClass().getClassLoader().getResource("menuLayout.fxml");
-        FXMLLoader fxmlLoader = new FXMLLoader(location);
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root, 600, 510);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        MainMenu.returnToMainMenu(primaryStage); // Correctly return to main menu
     }
 
     public void pauseGame(ActionEvent evt) {

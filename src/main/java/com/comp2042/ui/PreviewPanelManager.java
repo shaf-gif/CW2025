@@ -19,9 +19,6 @@ public class PreviewPanelManager {
         this.holdPanel = holdPanel;
     }
 
-    /**
-     * Renders all next and hold previews based on the ViewData.
-     */
     public void renderAllPreviews(ViewData data) {
         renderNextPreviews(data);
         renderHoldPreview(data);
