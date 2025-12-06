@@ -21,4 +21,9 @@ public final class OBrick implements Brick {
     public List<int[][]> getShapeMatrix() {
         return MatrixOperations.deepCopyList(brickMatrix);
     }
+
+    @Override
+    public BrickType getBrickType() {
+        return BrickType.O;
+    }
 }

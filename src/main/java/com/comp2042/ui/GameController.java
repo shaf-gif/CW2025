@@ -2,7 +2,7 @@ package com.comp2042.ui;
 
 import com.comp2042.logic.movement.InputEventListener;
 import com.comp2042.logic.board.Board;
-import com.comp2042.logic.board.SimpleBoard;
+import com.comp2042.logic.bricks.BrickType;
 import com.comp2042.logic.movement.ClearRow;
 import com.comp2042.logic.movement.DownData;
 import com.comp2042.logic.movement.MoveEvent;
@@ -24,7 +24,6 @@ public class GameController implements InputEventListener {
         viewGuiController.bindScore(board.getScore().scoreProperty());
         viewGuiController.bindLevel(board.getScore().levelProperty());
 
-        // Pass score reference for leaderboard saving
         viewGuiController.setScoreTracker(board.getScore());
     }
 
@@ -32,9 +31,10 @@ public class GameController implements InputEventListener {
     public DownData onDownEvent(MoveEvent event) {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
+        BrickType mergedBrickType = null;
 
         if (!canMove) {
-            board.mergeBrickToBackground();
+            mergedBrickType = board.mergeBrickToBackground();
             AudioManager.getInstance().playDrop();
 
             clearRow = board.clearRows();
@@ -42,10 +42,13 @@ public class GameController implements InputEventListener {
                 AudioManager.getInstance().playLineClear();
                 board.getScore().add(clearRow.getScoreBonus());
                 board.getScore().addClearedRows(clearRow.getLinesRemoved());
-
-                // Notify GUI of level change for speed adjustment
-                viewGuiController.updateGameSpeed(board.getScore().getLevel());
             }
+
+            if (mergedBrickType == BrickType.SLOW) {
+                viewGuiController.activateSlowMode();
+            }
+
+            viewGuiController.updateGameSpeed(board.getScore().getLevel());
 
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
@@ -62,14 +65,14 @@ public class GameController implements InputEventListener {
         int dropDistance = 0;
         boolean canMove;
         ClearRow clearRow = null;
+        BrickType mergedBrickType = null;
 
-        // instantly drop until collision
         do {
             canMove = board.moveBrickDown();
             if (canMove) dropDistance++;
         } while (canMove);
 
-        board.mergeBrickToBackground();
+        mergedBrickType = board.mergeBrickToBackground();
         AudioManager.getInstance().playDrop();
 
         clearRow = board.clearRows();
@@ -77,10 +80,13 @@ public class GameController implements InputEventListener {
             AudioManager.getInstance().playLineClear();
             board.getScore().add(clearRow.getScoreBonus());
             board.getScore().addClearedRows(clearRow.getLinesRemoved());
-
-            // Notify GUI of level change for speed adjustment
-            viewGuiController.updateGameSpeed(board.getScore().getLevel());
         }
+
+        if (mergedBrickType == BrickType.SLOW) {
+            viewGuiController.activateSlowMode();
+        }
+
+        viewGuiController.updateGameSpeed(board.getScore().getLevel());
 
         if (board.createNewBrick()) {
             viewGuiController.gameOver();
@@ -120,10 +126,9 @@ public class GameController implements InputEventListener {
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
-        viewGuiController.updateGameSpeed(1); // Reset to level 1 speed
+        viewGuiController.updateGameSpeed(1);
     }
 
-    // New methods for Command pattern integration
     public void moveLeft() {
         onLeftEvent(null);
     }
@@ -141,8 +146,6 @@ public class GameController implements InputEventListener {
     }
 
     public void rotateCounterClockwise() {
-        // As per current GameController, onRotateEvent is the only rotation.
-        // If distinct counter-clockwise is needed, board logic must change first.
         onRotateEvent(null);
     }
 

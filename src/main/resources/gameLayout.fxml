@@ -15,7 +15,7 @@
             </center>
         </BorderPane>
 
-        <VBox layoutX="260" layoutY="16" spacing="6" alignment="TOP_CENTER" styleClass="side-panel">
+        <VBox layoutX="260" layoutY="16" spacing="4" alignment="TOP_CENTER" styleClass="side-panel">
 
             <HBox spacing="10" alignment="CENTER" prefWidth="200" prefHeight="38" styleClass="score-level-box">
 
@@ -37,6 +37,14 @@
                     <HBox.hgrow>ALWAYS</HBox.hgrow>
                 </Label>
             </HBox>
+            <Label fx:id="slowModeIndicator"
+                   text="SLOW MODE ACTIVE"
+                   visible="true"
+                   styleClass="slow-mode-indicator"
+                   alignment="CENTER"
+                   maxWidth="Infinity">
+                <VBox.margin> <Insets top="2" bottom="2" /> </VBox.margin>
+            </Label>
             <HBox spacing="20" alignment="CENTER">
                 <Button fx:id="pauseButton"
                         text="Pause"
@@ -61,10 +69,10 @@
                         onAction="#toggleShadow" />
             </HBox>
 
-            <VBox spacing="12" alignment="CENTER">
-                <VBox spacing="6" alignment="CENTER">
+            <VBox spacing="4" alignment="CENTER">
+                <VBox spacing="2" alignment="CENTER">
                     <Label text="Hold" styleClass="section-label" />
-                    <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                    <StackPane alignment="CENTER" prefWidth="56" prefHeight="56" styleClass="preview-box">
                         <GridPane fx:id="holdPanel" hgap="1" vgap="1" alignment="CENTER" />
                     </StackPane>
                 </VBox>
@@ -72,15 +80,15 @@
                 <VBox spacing="8" alignment="CENTER">
                     <Label text="Next" styleClass="section-label" />
 
-                    <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                    <StackPane alignment="CENTER" prefWidth="56" prefHeight="56" styleClass="preview-box">
                         <GridPane fx:id="nextPanel1" hgap="1" vgap="1" alignment="CENTER" />
                     </StackPane>
 
-                    <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                    <StackPane alignment="CENTER" prefWidth="56" prefHeight="56" styleClass="preview-box">
                         <GridPane fx:id="nextPanel2" hgap="1" vgap="1" alignment="CENTER" />
                     </StackPane>
 
-                    <StackPane alignment="CENTER" prefWidth="64" prefHeight="64" styleClass="preview-box">
+                    <StackPane alignment="CENTER" prefWidth="56" prefHeight="56" styleClass="preview-box">
                         <GridPane fx:id="nextPanel3" hgap="1" vgap="1" alignment="CENTER" />
                     </StackPane>
                 </VBox>

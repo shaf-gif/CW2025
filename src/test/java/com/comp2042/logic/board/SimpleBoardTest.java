@@ -3,6 +3,7 @@ package com.comp2042.logic.board;
 import com.comp2042.logic.Constants;
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
+import com.comp2042.logic.bricks.BrickType;
 import com.comp2042.logic.bricks.IBrick;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
 import com.comp2042.logic.movement.ClearRow;
@@ -25,25 +26,20 @@ public class SimpleBoardTest {
 
     @BeforeEach
     void setUp() {
-        // Mock BrickGenerator and BrickRotator to control brick spawning and rotation
         mockBrickGenerator = mock(BrickGenerator.class);
         mockBrickRotator = mock(BrickRotator.class);
 
-        // Use reflection to inject mocks into SimpleBoard since it doesn't have a constructor for them
         try {
             simpleBoard = new SimpleBoard();
             
-            // Set the mock brickGenerator
             java.lang.reflect.Field brickGeneratorField = SimpleBoard.class.getDeclaredField("brickGenerator");
             brickGeneratorField.setAccessible(true);
             brickGeneratorField.set(simpleBoard, mockBrickGenerator);
 
-            // Set the mock brickRotator
             java.lang.reflect.Field brickRotatorField = SimpleBoard.class.getDeclaredField("brickRotator");
             brickRotatorField.setAccessible(true);
             brickRotatorField.set(simpleBoard, mockBrickRotator);
 
-            // Default behavior for getCurrentShape to prevent NullPointerException
             when(mockBrickRotator.getCurrentShape()).thenReturn(new int[][]{{0}});
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -66,7 +62,7 @@ public class SimpleBoardTest {
 
     @Test
     void testCreateNewBrick() {
-        Brick mockBrick = new IBrick(); // Example brick
+        Brick mockBrick = new IBrick();
         when(mockBrickGenerator.getBrick()).thenReturn(mockBrick);
         when(mockBrickRotator.getCurrentShape()).thenReturn(mockBrick.getShapeMatrix().get(0));
 
@@ -75,7 +71,6 @@ public class SimpleBoardTest {
         verify(mockBrickGenerator, times(1)).getBrick();
         verify(mockBrickRotator, times(1)).setBrick(mockBrick);
 
-        // Check if currentOffset is set correctly for spawning
         try {
             java.lang.reflect.Field currentOffsetField = SimpleBoard.class.getDeclaredField("currentOffset");
             currentOffsetField.setAccessible(true);
@@ -98,9 +93,8 @@ public class SimpleBoardTest {
         when(mockBrickGenerator.getBrick()).thenReturn(mockBrick);
         when(mockBrickRotator.getCurrentShape()).thenReturn(initialShape);
 
-        simpleBoard.createNewBrick(); // Spawn a brick
+        simpleBoard.createNewBrick();
 
-        // Initially at spawnY
         try {
             java.lang.reflect.Field currentOffsetField = SimpleBoard.class.getDeclaredField("currentOffset");
             currentOffsetField.setAccessible(true);
@@ -110,12 +104,10 @@ public class SimpleBoardTest {
             fail("Failed to access currentOffset field: " + e.getMessage());
         }
 
-        // Simulate successful move down
-        when(mockBrickRotator.getCurrentShape()).thenReturn(initialShape); // Ensure shape is consistent
+        when(mockBrickRotator.getCurrentShape()).thenReturn(initialShape);
         boolean moved = simpleBoard.moveBrickDown();
         assertTrue(moved);
 
-        // Verify offset changed
         try {
             java.lang.reflect.Field currentOffsetField = SimpleBoard.class.getDeclaredField("currentOffset");
             currentOffsetField.setAccessible(true);
@@ -129,22 +121,26 @@ public class SimpleBoardTest {
     @Test
     void testHoldCurrentBrick_initialHold() {
         Brick initialBrick = new IBrick();
-        when(mockBrickGenerator.getBrick()).thenReturn(initialBrick); // First brick spawned
+        when(mockBrickGenerator.getBrick()).thenReturn(initialBrick);
         simpleBoard.createNewBrick();
 
-        Brick nextBrick = new Brick() { // A dummy brick for the "next" brick after hold
+        Brick nextBrick = new Brick() {
             @Override
             public List<int[][]> getShapeMatrix() {
                 List<int[][]> shapes = new ArrayList<>();
                 shapes.add(new int[][]{{1}});
                 return shapes;
             }
+
+            @Override
+            public BrickType getBrickType() {
+                return BrickType.I;
+            }
         };
-        when(mockBrickGenerator.getBrick()).thenReturn(nextBrick); // Next brick to be generated after hold
+        when(mockBrickGenerator.getBrick()).thenReturn(nextBrick);
 
         simpleBoard.holdCurrentBrick();
 
-        // Verify that initialBrick is now heldBrick
         try {
             java.lang.reflect.Field heldBrickField = SimpleBoard.class.getDeclaredField("heldBrick");
             heldBrickField.setAccessible(true);
@@ -154,7 +150,6 @@ public class SimpleBoardTest {
             fail("Failed to access heldBrick field: " + e.getMessage());
         }
 
-        // Verify that the current brick is the next generated brick
         try {
             java.lang.reflect.Field currentBrickField = SimpleBoard.class.getDeclaredField("currentBrick");
             currentBrickField.setAccessible(true);
@@ -164,7 +159,6 @@ public class SimpleBoardTest {
             fail("Failed to access currentBrick field: " + e.getMessage());
         }
 
-        // Verify holdUsedThisTurn is true
         try {
             java.lang.reflect.Field holdUsedField = SimpleBoard.class.getDeclaredField("holdUsedThisTurn");
             holdUsedField.setAccessible(true);
@@ -179,18 +173,22 @@ public class SimpleBoardTest {
     void testHoldCurrentBrick_swapHold() {
         Brick initialBrick = new IBrick();
         when(mockBrickGenerator.getBrick()).thenReturn(initialBrick);
-        simpleBoard.createNewBrick(); // Spawn initial brick
+        simpleBoard.createNewBrick();
 
-        Brick heldBrickBeforeSwap = new Brick() { // A dummy held brick
+        Brick heldBrickBeforeSwap = new Brick() {
             @Override
             public List<int[][]> getShapeMatrix() {
                 List<int[][]> shapes = new ArrayList<>();
                 shapes.add(new int[][]{{2}});
                 return shapes;
             }
+
+            @Override
+            public BrickType getBrickType() {
+                return BrickType.J;
+            }
         };
 
-        // Manually set held brick and holdUsedThisTurn for the scenario
         try {
             java.lang.reflect.Field heldBrickField = SimpleBoard.class.getDeclaredField("heldBrick");
             heldBrickField.setAccessible(true);
@@ -198,14 +196,13 @@ public class SimpleBoardTest {
 
             java.lang.reflect.Field holdUsedField = SimpleBoard.class.getDeclaredField("holdUsedThisTurn");
             holdUsedField.setAccessible(true);
-            holdUsedField.set(simpleBoard, false); // Allow hold
+            holdUsedField.set(simpleBoard, false);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             fail("Failed to set up held brick for swap test: " + e.getMessage());
         }
 
-        simpleBoard.holdCurrentBrick(); // Perform swap
+        simpleBoard.holdCurrentBrick();
 
-        // Verify initialBrick is now heldBrick
         try {
             java.lang.reflect.Field heldBrickField = SimpleBoard.class.getDeclaredField("heldBrick");
             heldBrickField.setAccessible(true);
@@ -215,7 +212,6 @@ public class SimpleBoardTest {
             fail("Failed to access heldBrick field: " + e.getMessage());
         }
 
-        // Verify that the current brick is the one that was held before swap
         try {
             java.lang.reflect.Field currentBrickField = SimpleBoard.class.getDeclaredField("currentBrick");
             currentBrickField.setAccessible(true);
@@ -225,7 +221,6 @@ public class SimpleBoardTest {
             fail("Failed to access currentBrick field: " + e.getMessage());
         }
 
-        // Verify holdUsedThisTurn is true
         try {
             java.lang.reflect.Field holdUsedField = SimpleBoard.class.getDeclaredField("holdUsedThisTurn");
             holdUsedField.setAccessible(true);
@@ -242,12 +237,10 @@ public class SimpleBoardTest {
         when(mockBrickGenerator.getBrick()).thenReturn(initialBrick);
         simpleBoard.createNewBrick();
 
-        // Perform first hold
-        Brick nextBrick = new IBrick(); // Placeholder for the brick after the first hold
+        Brick nextBrick = new IBrick();
         when(mockBrickGenerator.getBrick()).thenReturn(nextBrick);
         simpleBoard.holdCurrentBrick();
 
-        // Attempt second hold in the same turn
         Brick currentBrickAfterFirstHold = null;
         Brick heldBrickAfterFirstHold = null;
         try {
@@ -262,9 +255,8 @@ public class SimpleBoardTest {
             fail("Failed to access fields: " + e.getMessage());
         }
 
-        simpleBoard.holdCurrentBrick(); // This should do nothing
+        simpleBoard.holdCurrentBrick();
 
-        // Verify no change to current or held brick
         try {
             java.lang.reflect.Field currentBrickField = SimpleBoard.class.getDeclaredField("currentBrick");
             currentBrickField.setAccessible(true);

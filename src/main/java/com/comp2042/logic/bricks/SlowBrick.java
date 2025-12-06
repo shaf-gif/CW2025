@@ -4,25 +4,16 @@ import com.comp2042.logic.board.MatrixOperations;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class SBrick implements Brick {
+public final class SlowBrick implements Brick {
 
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
-    public SBrick() {
-
-        // 0°
+    public SlowBrick() {
+        // A simple 2x2 shape for the SlowBrick
         brickMatrix.add(new int[][]{
                 {0, 0, 0, 0},
-                {0, 5, 5, 0},
-                {5, 5, 0, 0},
-                {0, 0, 0, 0}
-        });
-
-        // 90°
-        brickMatrix.add(new int[][]{
-                {5, 0, 0, 0},
-                {5, 5, 0, 0},
-                {0, 5, 0, 0},
+                {0, 8, 8, 0},
+                {0, 8, 8, 0},
                 {0, 0, 0, 0}
         });
     }
@@ -34,6 +25,6 @@ public final class SBrick implements Brick {
 
     @Override
     public BrickType getBrickType() {
-        return BrickType.S;
+        return BrickType.SLOW;
     }
 }

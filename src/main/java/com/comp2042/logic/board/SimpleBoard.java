@@ -4,6 +4,7 @@ import com.comp2042.ui.AudioManager;
 import com.comp2042.logic.Constants;
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
+import com.comp2042.logic.bricks.BrickType;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
 import com.comp2042.logic.bricks.RandomBrickGenerationStrategy;
 import com.comp2042.logic.movement.ClearRow;
@@ -24,7 +25,6 @@ public class SimpleBoard implements Board {
     private int[][] boardMatrix;
     private Point currentOffset;
 
-    // Hold feature state
     private Brick heldBrick;
     private Brick currentBrick;
     private boolean holdUsedThisTurn;
@@ -37,15 +37,10 @@ public class SimpleBoard implements Board {
 
         boardMatrix = new int[height][width];
 
-        brickGenerator = new RandomBrickGenerator(new RandomBrickGenerationStrategy());
-        brickRotator = new BrickRotator();
-
         score = new Score();
+        brickGenerator = new RandomBrickGenerator(score);
+        brickRotator = new BrickRotator();
     }
-
-    // ----------------------------------------------------
-    // MOVEMENT
-    // ----------------------------------------------------
 
     @Override
     public boolean moveBrickDown() {
@@ -111,10 +106,6 @@ public class SimpleBoard implements Board {
         return true;
     }
 
-    // ----------------------------------------------------
-    // SPAWN NEW BRICK
-    // ----------------------------------------------------
-
     @Override
     public boolean createNewBrick() {
 
@@ -122,13 +113,12 @@ public class SimpleBoard implements Board {
         currentBrick = newBrick;
         brickRotator.setBrick(newBrick);
 
-        int spawnX = width / 2 - 1;            // centered
-        int spawnY = Constants.HIDDEN_ROWS;    // behind hidden rows
+        int spawnX = width / 2 - 1;
+        int spawnY = Constants.HIDDEN_ROWS;
 
         currentOffset = new Point(spawnX, spawnY);
-        holdUsedThisTurn = false; // allow hold on new piece
+        holdUsedThisTurn = false;
 
-        // If collision on spawn → game over
         return MatrixOperations.intersect(
                 boardMatrix,
                 brickRotator.getCurrentShape(),
@@ -136,10 +126,6 @@ public class SimpleBoard implements Board {
                 currentOffset.y
         );
     }
-
-    // ----------------------------------------------------
-    // BOARD GETTERS
-    // ----------------------------------------------------
 
     @Override
     public int[][] getBoardMatrix() {
@@ -151,17 +137,12 @@ public class SimpleBoard implements Board {
         return score;
     }
 
-    // ----------------------------------------------------
-    // GHOST + VIEW DATA
-    // ----------------------------------------------------
-
     @Override
     public ViewData getViewData() {
 
         int ghostX = currentOffset.x;
         int ghostY = computeGhostY();
 
-        // Collect up to three next preview shapes
         var nextBricks = brickGenerator.peekNext(3);
         int[][][] nextShapes = new int[nextBricks.size()][][];
         for (int i = 0; i < nextBricks.size(); i++) {
@@ -191,14 +172,12 @@ public class SimpleBoard implements Board {
         int spawnY = Constants.HIDDEN_ROWS;
 
         if (heldBrick == null) {
-            // Store current and spawn a new one
             heldBrick = currentBrick;
             Brick newBrick = brickGenerator.getBrick();
             currentBrick = newBrick;
             brickRotator.setBrick(newBrick);
             currentOffset = new Point(spawnX, spawnY);
         } else {
-            // Swap held with current
             Brick temp = heldBrick;
             heldBrick = currentBrick;
             currentBrick = temp;
@@ -223,19 +202,15 @@ public class SimpleBoard implements Board {
             int nextY = testY + 1;
 
             if (MatrixOperations.intersect(temp, shape, x, nextY)) {
-                return testY; // ghost stops here
+                return testY;
             }
 
             testY = nextY;
         }
     }
 
-    // ----------------------------------------------------
-    // MERGE + CLEAR
-    // ----------------------------------------------------
-
     @Override
-    public void mergeBrickToBackground() {
+    public BrickType mergeBrickToBackground() {
 
         boardMatrix = MatrixOperations.merge(
                 boardMatrix,
@@ -243,8 +218,8 @@ public class SimpleBoard implements Board {
                 currentOffset.x,
                 currentOffset.y
         );
-        // After locking a piece, allow hold again on the next piece
         holdUsedThisTurn = false;
+        return currentBrick.getBrickType();
     }
 
     @Override
