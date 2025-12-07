@@ -14,7 +14,7 @@ import com.comp2042.logic.scoring.Score;
 public class RandomBrickGenerationStrategy implements BrickGenerationStrategy {
 
     /** The probability (0.0-1.0) of generating a Slow Brick when the level is 3 or higher. */
-    private static final double SLOW_BRICK_CHANCE = 0.15;
+    private static final double SLOW_BRICK_CHANCE = 0.10;
 
     /** The game's score object, used to determine the current level. */
     private final Score score;
@@ -78,8 +78,14 @@ public class RandomBrickGenerationStrategy implements BrickGenerationStrategy {
      */
     private void ensureQueueSize(int minSize) {
         while (nextBricks.size() < minSize) {
-            if (bag.isEmpty()) refillBag();
-            nextBricks.add(bag.remove(0));
+            if (score.getLevel() >= 3 && ThreadLocalRandom.current().nextDouble() < SLOW_BRICK_CHANCE) {
+                nextBricks.add(new SlowBrick());
+            } else {
+                if (bag.isEmpty()) {
+                    refillBag();
+                }
+                nextBricks.add(bag.remove(0));
+            }
         }
     }
 
@@ -93,16 +99,6 @@ public class RandomBrickGenerationStrategy implements BrickGenerationStrategy {
     @Override
     public Brick generateNextBrick() {
         ensureQueueSize(1);
-
-        Brick nextToDeliver = nextBricks.peek();
-
-        if (score.getLevel() >= 3 &&
-            nextToDeliver.getBrickType() != BrickType.SLOW &&
-            ThreadLocalRandom.current().nextDouble() < SLOW_BRICK_CHANCE) {
-            nextBricks.poll();
-            nextBricks.addFirst(new SlowBrick());
-        }
-
         Brick current = nextBricks.poll();
         ensureQueueSize(3);
         return current;

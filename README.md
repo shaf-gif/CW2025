@@ -1,4 +1,4 @@
-# CW2025 - Tetris-like Game
+# CW2025 - Tetris-JavaFX
 
 ## GitHub Repository
 [https://github.com/shaf-gif/CW2025]
@@ -9,25 +9,35 @@ To compile and run this project, follow these steps:
 
 1.  **Prerequisites:**
     *   Java Development Kit (JDK) 17 or newer.
-    *   Apache Maven.
 
 2.  **Clone the repository:**
     ```bash
     git clone https://github.com/shaf-gif/CW2025
     cd CW2025
-    ```
+
 
 3.  **Compile the project:**
-    Use Maven to compile the project. This will download all necessary dependencies and build the application.
-    ```bash
-    mvn clean install
-    ```
+    Use the Maven Wrapper to compile the project. This will automatically download the correct Maven version and all necessary dependencies.
+
+    *   On **macOS/Linux**:
+        ```bash
+        ./mvnw clean install
+        ```
+    *   On **Windows**:
+        ```bash
+        mvnw.cmd clean install
+        ```
 
 4.  **Run the application:**
-    After successful compilation, you can run the application using the JavaFX Maven plugin:
-    ```bash
-    mvn javafx:run
-    ```
+    After successful compilation, you can run the application using the Maven Wrapper and the JavaFX plugin.
+    *   On **macOS/Linux**:
+        ```bash
+        ./mvnw javafx:run
+        ```
+    *   On **Windows**:
+        ```bash
+        mvnw.cmd javafx:run
+        ```
 
 ## Implemented and Working Properly
 
