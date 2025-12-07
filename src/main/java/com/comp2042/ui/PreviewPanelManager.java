@@ -39,11 +39,7 @@ public class PreviewPanelManager {
      *
      * @param data The ViewData object containing the current game state information.
      */
-    /**
-     * Renders all preview panels (upcoming bricks and held brick) based on the provided game data.
-     * Delegates to {@code renderNextPreviews} and {@code renderHoldPreview}.
-     * @param data The {@code ViewData} object containing the current game state information.
-     */
+
     public void renderAllPreviews(ViewData data) {
         renderNextPreviews(data);
         renderHoldPreview(data);
@@ -54,11 +50,7 @@ public class PreviewPanelManager {
      *
      * @param data The ViewData object containing the current game state information.
      */
-    /**
-     * Renders the next incoming brick preview panels (up to three).
-     * Clears existing content and draws the shapes provided in the {@code ViewData}.
-     * @param data The {@code ViewData} object containing the current game state information, specifically next bricks data.
-     */
+
     void renderNextPreviews(ViewData data) {
         int[][][] previews = data.getNextBricksData();
         renderPreview(nextPanel1, previews != null && previews.length > 0 ? previews[0] : null);
