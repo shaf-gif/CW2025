@@ -33,18 +33,18 @@ To compile and run this project, follow these steps:
 
 The following features were found to be **already implemented** in the provided codebase and are functioning as expected:
 
-*   **Main Menu:**
-    *   **Function & Use:** The main menu serves as the initial screen of the application, providing players with options to start a new game, view high scores on the leaderboard, adjust game settings, or exit the application. It also allows players to input their name and resume an active game.
+1.  **Main Menu:**
+    - **Function & Use:** The main menu serves as the initial screen of the application, providing players with options to start a new game, view high scores on the leaderboard, adjust game settings, or exit the application. It also allows players to input their name and resume an active game.
 
-*   **Leaderboard System:**
-    *   **Function & Use:** This system tracks and displays the top game scores, along with player names, the level reached, and the number of rows cleared in each game. Scores are saved persistently between application runs, and players can view or clear the leaderboard from the main menu.
+2.  **Leaderboard System:**
+    - **Function & Use:** This system tracks and displays the top game scores, along with player names, the level reached, and the number of rows cleared in each game. Scores are saved persistently between application runs, and players can view or clear the leaderboard from the main menu.
 
-*   **Music and Sound Effects (SFX):**
-    *   **Function & Use:** The game features immersive audio feedback, including background music that changes between the main menu and in-game, and sound effects for crucial player actions like button clicks, dropping bricks, clearing lines, and rotating pieces. Players can control the volume and toggle music/SFX on or off.
+3.  **Music and Sound Effects (SFX):**
+    - **Function & Use:** The game features immersive audio feedback, including background music that changes between the main menu and in-game, and sound effects for crucial player actions like button clicks, dropping bricks, clearing lines, and rotating pieces. Players can control the volume and toggle music/SFX on or off.
 
-*   **Next Three Preview:**
-    *   **Function & Use:** This feature provides players with a strategic advantage by displaying the next three bricks that will enter the game board. This allows for better planning and more complex setups. The brick generation employs a "bag" system, ensuring that all seven standard Tetris pieces (I, J, L, O, S, T, Z) appear in a random but fair distribution before the bag is refilled and reshuffled.
-    *   **Core Logic Snippet:**
+4.  **Next Three Preview:**
+    - **Function & Use:** This feature provides players with a strategic advantage by displaying the next three bricks that will enter the game board. This allows for better planning and more complex setups. The brick generation employs a "bag" system, ensuring that all seven standard Tetris pieces (I, J, L, O, S, T, Z) appear in a random but fair distribution before the bag is refilled and reshuffled.
+    - **Core Logic Snippet:**
         ```java
         // RandomBrickGenerationStrategy.java: Method to get next N bricks
         public List<Brick> peekNextBricks(int count) { /* ... returns immutable list of next bricks ... */ }
@@ -52,9 +52,9 @@ The following features were found to be **already implemented** in the provided 
         renderPreview(nextPanel1, previews[0]); renderPreview(nextPanel2, previews[1]); renderPreview(nextPanel3, previews[2]);
         ```
 
-*   **Hold Piece:**audiomanageno add
-    *   **Function & Use:** The "Hold" feature allows players to store the currently falling brick in a separate "hold" area. This brick can then be swapped back into play at a later time. A player can only use the hold feature once per turn (i.e., after a brick has landed and a new one generated, the hold can be used again).
-    *   **Core Logic Snippet:**
+5.  **Hold Piece:**
+    - **Function & Use:** The "Hold" feature allows players to store the currently falling brick in a separate "hold" area. This brick can then be swapped back into play at a later time. A player can only use the hold feature once per turn (i.e., after a brick has landed and a new one generated, the hold can be used again).
+    - **Core Logic Snippet:**
         ```java
         // SimpleBoard.java: Hold logic
         if (heldBrick == null) { heldBrick = currentBrick; /* ... get new brick ... */ }
@@ -62,9 +62,9 @@ The following features were found to be **already implemented** in the provided 
         holdUsedThisTurn = true;
         ```
 
-*   **Ghost Shadow with Toggle Button:**
-    *   **Function & Use:** The ghost shadow provides a visual cue, showing where the current falling brick will land if it were to drop immediately. This helps players accurately position pieces. The visibility of this ghost can be toggled on or off via a button (mapped to 'H' key) or a settings option.
-    *   **Core Logic Snippet:**
+6.  **Ghost Shadow with Toggle Button:**
+    - **Function & Use:** The ghost shadow provides a visual cue, showing where the current falling brick will land if it were to drop immediately. This helps players accurately position pieces. The visibility of this ghost can be toggled on or off via a button (mapped to 'H' key) or a settings option.
+    - **Core Logic Snippet:**
         ```java
         // SimpleBoard.java: Calculate ghost position
         private int computeGhostY() { /* ... simulates dropping current brick to find Y ... */ }
@@ -72,23 +72,23 @@ The following features were found to be **already implemented** in the provided 
         public void toggleShadow(ActionEvent evt) { isShadowEnabled = !isShadowEnabled; ghostPanel.setVisible(isShadowEnabled); }
         ```
 
-*   **Level System:**
-    *   **Function & Use:** The game incorporates a dynamic level system where difficulty increases as the player progresses. Clearing rows advances the player to the next level, which in turn speeds up the automatic falling rate of bricks. The current level is prominently displayed on the game screen. Specifically, players advance to a new level for every **5 rows cleared**. As the level increases, the base fall delay of bricks is reduced, making them fall faster.
-        **Formula for Fall Delay:**
+7.  **Level System:**
+    - **Function & Use:** The game incorporates a dynamic level system where difficulty increases as the player progresses. Clearing rows advances the player to the next level, which in turn speeds up the automatic falling rate of bricks. The current level is prominently displayed on the game screen. Specifically, players advance to a new level for every **5 rows cleared**. As the level increases, the base fall delay of bricks is reduced, making them fall faster.
+    - **Formula for Fall Delay:**
         ```
         fall_delay_ms = base_fall_delay_ms * (0.75 ^ (level - 1))
         ```
         (minimum 50ms).
 
-*   **Slow Block:**
-    *   **Function & Use:** The Slow Block is a special type of brick that introduces a unique gameplay modifier. When a Slow Block is generated (which occurs randomly with a **15% probability** once the player reaches **Level 3 or higher**), it is temporarily inserted into the normal brick generation sequence (which uses the bag system). It is not shown in the "Next Three Preview," making its appearance a surprise. Once successfully placed by the player, it temporarily slows down the entire game's pace for **8 seconds**. This offers a brief period of reduced difficulty, providing players with more time to plan and react. The Slow Block can also be held, allowing players to strategically save its slowdown effect for a critical moment, potentially "preserving" their game from a difficult situation. Visually, the Slow Block appears as a **2x2 green square**, and a "SLOW MODE ACTIVE" indicator is displayed on the UI while the effect is in progress.
-        **Formula for Slow Mode Fall Delay:**
+8.  **Slow Block:**
+    - **Function & Use:** The Slow Block is a special type of brick that introduces a unique gameplay modifier. When a Slow Block is generated (which occurs randomly with a **15% probability** once the player reaches **Level 3 or higher**), it is temporarily inserted into the normal brick generation sequence (which uses the bag system). It is not shown in the "Next Three Preview," making its appearance a surprise. Once successfully placed by the player, it temporarily slows down the entire game's pace for **8 seconds**. This offers a brief period of reduced difficulty, providing players with more time to plan and react. The Slow Block can also be held, allowing players to strategically save its slowdown effect for a critical moment, potentially "preserving" their game from a difficult situation. Visually, the Slow Block appears as a **2x2 green square**, and a "SLOW MODE ACTIVE" indicator is displayed on the UI while the effect is in progress.
+    - **Formula for Slow Mode Fall Delay:**
         ```
         slow_fall_delay_ms = current_fall_delay_ms * 3.0
         ```
 
-*   **Hard Drop:**
-    *   **Function & Use:** Hard drop is a fundamental Tetris mechanic that allows players to instantly move the current falling brick to the lowest possible position on the board. This provides quick and precise placement, crucial for advanced strategies. The 'SPACE' bar triggers this action.
+9.  **Hard Drop:**
+    - **Function & Use:** Hard drop is a fundamental Tetris mechanic that allows players to instantly move the current falling brick to the lowest possible position on the board. This provides quick and precise placement, crucial for advanced strategies. The 'SPACE' bar triggers this action.
 
 ## UI Enhancements
 
@@ -132,7 +132,7 @@ The following classes represent new additions or significant refactorings in the
 *   **SlowBrick**: A special brick type that, when placed, temporarily slows down the game's pace.
 *   **Constants**: Stores various constant values and configuration parameters used throughout the game (e.g., tile sizes, game speeds, probabilities).
 
-**Note: Test classes were created for all new Java classes, as well as some other less critical classes not explicitly mentioned here, ensuring comprehensive test coverage.**
+**Note: Test classes were created for all new Java classes, as well as some op ther less critical classes not explicitly mentioned here, ensuring comprehensive test coverage.**
 
 ## New FXML Classes
 
