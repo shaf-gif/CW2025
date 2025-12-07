@@ -91,6 +91,7 @@ public class MainMenu implements Initializable {
         primaryStage.show();
 
         activeGameScene = gameScene;
+        activeGameScene.getRoot().setUserData(c); // Store the GuiController instance
 
         // Switch to game music
         audioManager.playBackgroundMusic("game");
@@ -206,11 +207,18 @@ public class MainMenu implements Initializable {
         URL location = MainMenu.class.getClassLoader().getResource("menuLayout.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(location);
         Parent root = fxmlLoader.load();
+        MainMenu mainMenuController = fxmlLoader.getController(); // Get the controller instance
 
         Scene scene = new Scene(root, 600, 510);
         stage.setScene(scene);
         stage.show();
 
+        // Update resume button visibility on the newly loaded MainMenu controller
+        if (mainMenuController.resumeButton != null) {
+            mainMenuController.resumeButton.setVisible(activeGameScene != null);
+            mainMenuController.resumeButton.setManaged(activeGameScene != null);
+        }
+        
         // Switch back to menu music
         AudioManager.getInstance().playBackgroundMusic("menu");
     }

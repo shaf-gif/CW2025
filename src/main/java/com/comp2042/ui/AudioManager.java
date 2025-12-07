@@ -5,7 +5,9 @@ import javafx.scene.media.MediaPlayer;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Manages all audio playback within the application, including background music and sound effects.
@@ -21,6 +23,8 @@ public class AudioManager {
     private MediaPlayer backgroundMusicPlayer;
     /** A map to store loaded sound effects by name. */
     private Map<String, Media> soundEffects;
+    /** A set to keep track of active sound effect MediaPlayers. */
+    private Set<MediaPlayer> activeSoundEffectPlayers;
     /** The current volume level for background music (0.0 to 1.0). */
     private double musicVolume = 0.5;
     /** The current volume level for sound effects (0.0 to 1.0). */
@@ -53,6 +57,7 @@ public class AudioManager {
     private AudioManager(MediaPlayerFactory mediaPlayerFactory) {
         this.mediaPlayerFactory = mediaPlayerFactory;
         soundEffects = new HashMap<>();
+        activeSoundEffectPlayers = new HashSet<>();
         loadSoundEffects();
     }
 
@@ -174,7 +179,11 @@ public class AudioManager {
         if (sound != null) {
             MediaPlayer mediaPlayer = mediaPlayerFactory.createMediaPlayer(sound);
             mediaPlayer.setVolume(sfxVolume);
-            mediaPlayer.setOnEndOfMedia(mediaPlayer::dispose);
+            activeSoundEffectPlayers.add(mediaPlayer); // Add to the set of active players
+            mediaPlayer.setOnEndOfMedia(() -> {
+                mediaPlayer.dispose();
+                activeSoundEffectPlayers.remove(mediaPlayer); // Remove from the set
+            });
             mediaPlayer.play();
         } else {
             System.err.println("Sound effect not found: " + effectName);
@@ -285,7 +294,21 @@ public class AudioManager {
      */
     public void dispose() {
         stopBackgroundMusic();
+        stopAllSoundEffects(); // Stop and dispose all active sound effects
         soundEffects.clear();
+    }
+
+    /**
+     * Stops and disposes all currently active sound effect players.
+     */
+    public void stopAllSoundEffects() {
+        for (MediaPlayer player : new HashSet<>(activeSoundEffectPlayers)) { // Iterate over a copy to avoid ConcurrentModificationException
+            if (player.getStatus() == MediaPlayer.Status.PLAYING) {
+                player.stop();
+            }
+            player.dispose();
+        }
+        activeSoundEffectPlayers.clear();
     }
 
     /**

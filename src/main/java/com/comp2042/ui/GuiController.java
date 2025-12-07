@@ -481,6 +481,8 @@ public class GuiController implements Initializable {
         timeline.stop();
         isGameOver.set(true);
 
+        AudioManager.getInstance().stopAllSoundEffects(); // Stop all sound effects on game over
+
         if (scoreTracker != null) {
             LeaderboardManager.saveScore(
                     playerName,
@@ -526,6 +528,7 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent evt) {
 
             AudioManager.getInstance().playButtonClick();
+            AudioManager.getInstance().stopAllSoundEffects(); // Stop all sound effects on new game start
 
             timeline.stop();
 
@@ -592,7 +595,11 @@ public class GuiController implements Initializable {
      * @throws IOException If there is an error loading the main menu FXML.
      */
     public void goMainMenu(ActionEvent evt) throws IOException {
+            // Automatically pause the game when navigating to the main menu
+            pauseGame(null); 
 
+            AudioManager.getInstance().stopAllSoundEffects(); // Stop all sound effects before going to main menu
+            AudioManager.getInstance().stopBackgroundMusic(); // Stop game background music
             Stage primaryStage = (Stage) ((javafx.scene.Node) evt.getSource()).getScene().getWindow();
             MainMenu.returnToMainMenu(primaryStage); // Correctly return to main menu
 

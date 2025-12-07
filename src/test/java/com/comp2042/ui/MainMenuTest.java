@@ -128,7 +128,10 @@ class MainMenuTest extends JavaFxTestBase {
                     when(mock.load()).thenReturn(mockRoot);
                     when(mock.getController()).thenReturn(mockGuiController);
                 });
-             MockedConstruction<Scene> mockedConstructionScene = mockConstruction(Scene.class);
+             MockedConstruction<Scene> mockedConstructionScene = mockConstruction(Scene.class,
+                (mock, context) -> {
+                    when(mock.getRoot()).thenReturn(mockRoot); // Configure mock Scene to return a mock Root
+                });
              MockedConstruction<GameController> mockedConstructionGameController = mockConstruction(GameController.class);
              MockedConstruction<SimpleBoard> mockedConstructionSimpleBoard = mockConstruction(SimpleBoard.class)
         ) {
@@ -234,6 +237,7 @@ class MainMenuTest extends JavaFxTestBase {
         try (MockedConstruction<FXMLLoader> mockedConstructionFXMLLoader = mockConstruction(FXMLLoader.class,
                 (mock, context) -> {
                     when(mock.load()).thenReturn(mockRoot);
+                    when(mock.getController()).thenReturn(mainMenu); // Correctly return the MainMenu instance
                 });
              MockedConstruction<Scene> mockedConstructionScene = mockConstruction(Scene.class)
         ) {
