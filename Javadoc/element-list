@@ -1,0 +1,8 @@
+com.comp2042
+com.comp2042.logic
+com.comp2042.logic.board
+com.comp2042.logic.bricks
+com.comp2042.logic.movement
+com.comp2042.logic.scoring
+com.comp2042.model
+com.comp2042.ui

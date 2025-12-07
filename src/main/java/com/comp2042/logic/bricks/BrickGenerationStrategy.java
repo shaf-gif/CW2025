@@ -1,8 +1,13 @@
 package com.comp2042.logic.bricks;
 
 /**
- * Strategy interface for different brick generation algorithms.
+ * Defines the contract for brick generation strategies.
  */
 public interface BrickGenerationStrategy {
+    /**
+     * Generates the next brick in the sequence.
+     *
+     * @return the next brick.
+     */
     Brick generateNextBrick();
 }

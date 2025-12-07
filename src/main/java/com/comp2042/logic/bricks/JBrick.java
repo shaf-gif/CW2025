@@ -4,10 +4,17 @@ import com.comp2042.logic.board.MatrixOperations;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the 'J' shaped Tetris brick.
+ */
 public final class JBrick implements Brick {
 
+    /** A list of 2D integer arrays, each representing a rotation of the 'J' brick. */
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
+    /**
+     * Constructs a JBrick, initializing its rotation matrices.
+     */
     public JBrick() {
 
         // 0°

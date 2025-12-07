@@ -14,8 +14,18 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+/**
+ * A custom JavaFX BorderPane that displays notifications, typically for scores
+ * or bonus messages, with animated fade and translate transitions.
+ */
 public class NotificationPanel extends BorderPane {
 
+    /**
+     * Constructs a new NotificationPanel with the given text.
+     * The text is displayed as a glowing label in the center of the panel.
+     *
+     * @param text The text to be displayed in the notification.
+     */
     public NotificationPanel(String text) {
         setMinHeight(200);
         setMinWidth(220);
@@ -28,6 +38,13 @@ public class NotificationPanel extends BorderPane {
 
     }
 
+    /**
+     * Initiates the animation for displaying the score notification.
+     * This involves a fade out and an upward translate transition.
+     * After the animation, the panel is removed from the provided list of nodes.
+     *
+     * @param list The ObservableList of Nodes from which this panel will be removed after animation.
+     */
     public void showScore(ObservableList<Node> list) {
         FadeTransition ft = new FadeTransition(Duration.millis(2000), this);
         TranslateTransition tt = new TranslateTransition(Duration.millis(2500), this);
