@@ -7,10 +7,14 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.TextField?>
 <?import java.net.URL?>
+<?import javafx.scene.layout.Pane?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.comp2042.ui.MainMenu"
            styleClass="rootStyle">
+
+    <!-- Tetromino Container -->
+    <Pane fx:id="tetrominoContainer" StackPane.alignment="CENTER" prefHeight="510" prefWidth="600"/>
 
     <VBox alignment="CENTER" spacing="20" maxWidth="-Infinity" maxHeight="-Infinity">
         <!-- Padding for the VBox root container -->
