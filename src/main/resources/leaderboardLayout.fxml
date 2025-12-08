@@ -6,44 +6,47 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import java.net.URL?>
 
-<VBox alignment="CENTER" spacing="20" styleClass="rootStyle"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.comp2042.ui.LeaderboardController">
+<StackPane xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.comp2042.ui.LeaderboardController"
+           styleClass="rootStyle">
 
-    <padding>
-        <Insets top="30" right="50" bottom="30" left="50"/>
-    </padding>
+    <VBox alignment="CENTER" spacing="20" maxWidth="-Infinity" maxHeight="-Infinity">
+        <padding>
+            <Insets top="30" right="50" bottom="30" left="50"/>
+        </padding>
 
-    <Label text="LEADERBOARD" styleClass="menu"/>
+        <Label text="LEADERBOARD" styleClass="menu"/>
 
-    <!-- Leaderboard Display -->
-    <ScrollPane fitToWidth="true" prefHeight="300" styleClass="ipad-dark-grey">
-        <VBox fx:id="leaderboardContainer" spacing="5" styleClass="ipad-dark-grey">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
+        <!-- Leaderboard Display -->
+        <ScrollPane fitToWidth="true" prefHeight="300" styleClass="ipad-dark-grey">
+            <VBox fx:id="leaderboardContainer" spacing="5" styleClass="ipad-dark-grey">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
 
-            <!-- Header Row -->
-            <HBox spacing="10" styleClass="leaderboard-header">
-                <Label text="Rank" prefWidth="50" styleClass="nextBrickLabel"/>
-                <Label text="Player" prefWidth="150" styleClass="nextBrickLabel"/>
-                <Label text="Score" prefWidth="80" styleClass="nextBrickLabel"/>
-                <Label text="Level" prefWidth="60" styleClass="nextBrickLabel"/>
-                <Label text="Rows" prefWidth="60" styleClass="nextBrickLabel"/>
-            </HBox>
+                <!-- Header Row -->
+                <HBox spacing="10" styleClass="leaderboard-header">
+                    <Label text="Rank" prefWidth="50" styleClass="nextBrickLabel"/>
+                    <Label text="Player" prefWidth="150" styleClass="nextBrickLabel"/>
+                    <Label text="Score" prefWidth="80" styleClass="nextBrickLabel"/>
+                    <Label text="Level" prefWidth="60" styleClass="nextBrickLabel"/>
+                    <Label text="Rows" prefWidth="60" styleClass="nextBrickLabel"/>
+                </HBox>
 
-            <!-- Leaderboard entries will be added here dynamically -->
+                <!-- Leaderboard entries will be added here dynamically -->
+            </VBox>
+        </ScrollPane>
+
+        <VBox spacing="10" alignment="CENTER" prefWidth="250">
+            <Button text="CLEAR LEADERBOARD" onAction="#clearLeaderboard" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
+            <Button text="BACK TO MENU" onAction="#backToMenu" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
         </VBox>
-    </ScrollPane>
-
-    <VBox spacing="10" alignment="CENTER" prefWidth="250">
-        <Button text="CLEAR LEADERBOARD" onAction="#clearLeaderboard" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
-        <Button text="BACK TO MENU" onAction="#backToMenu" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
     </VBox>
 
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
-</VBox>
+</StackPane>

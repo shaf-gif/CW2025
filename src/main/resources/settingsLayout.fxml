@@ -8,82 +8,85 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import java.net.URL?>
 
-<VBox alignment="CENTER" spacing="10" styleClass="rootStyle"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.comp2042.ui.SettingsController">
+<StackPane xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.comp2042.ui.SettingsController"
+           styleClass="rootStyle">
 
-    <padding>
-        <Insets top="20" right="25" bottom="20" left="25"/>
-    </padding>
+    <VBox alignment="CENTER" spacing="10" maxWidth="-Infinity" maxHeight="-Infinity">
+        <padding>
+            <Insets top="20" right="25" bottom="20" left="25"/>
+        </padding>
 
-    <Label text="SETTINGS" styleClass="menu"/>
+        <Label text="SETTINGS" styleClass="menu"/>
 
-    <!-- Audio Section -->
-    <VBox spacing="10" alignment="CENTER" prefWidth="350" styleClass="audio-section">
-        <Label text="AUDIO" styleClass="section-label"/>
+        <!-- Audio Section -->
+        <VBox spacing="10" alignment="CENTER" prefWidth="350" styleClass="audio-section">
+            <Label text="AUDIO" styleClass="section-label"/>
 
-        <Separator prefWidth="300"/>
+            <Separator prefWidth="300"/>
 
-        <!-- Music Controls -->
-        <VBox spacing="5" alignment="CENTER_LEFT" prefWidth="300">
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <CheckBox fx:id="musicToggle" text="Enable Music" styleClass="audio-toggle"/>
-            </HBox>
+            <!-- Music Controls -->
+            <VBox spacing="5" alignment="CENTER_LEFT" prefWidth="300">
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <CheckBox fx:id="musicToggle" text="Enable Music" styleClass="audio-toggle"/>
+                </HBox>
 
-            <VBox spacing="5">
-                <Label fx:id="musicVolumeLabel" text="Music: 50%" styleClass="volume-label"/>
-                <Slider fx:id="musicVolumeSlider"
-                        min="0"
-                        max="100"
-                        value="50"
-                        blockIncrement="5"
-                        majorTickUnit="25"
-                        showTickMarks="false"
-                        styleClass="volume-slider"
-                        prefWidth="280"/>
+                <VBox spacing="5">
+                    <Label fx:id="musicVolumeLabel" text="Music: 50%" styleClass="volume-label"/>
+                    <Slider fx:id="musicVolumeSlider"
+                            min="0"
+                            max="100"
+                            value="50"
+                            blockIncrement="5"
+                            majorTickUnit="25"
+                            showTickMarks="false"
+                            styleClass="volume-slider"
+                            prefWidth="280"/>
+                </VBox>
             </VBox>
+
+            <Separator prefWidth="300"/>
+
+            <!-- Sound Effects Controls -->
+            <VBox spacing="5" alignment="CENTER_LEFT" prefWidth="300">
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <CheckBox fx:id="sfxToggle" text="Enable Sound Effects" styleClass="audio-toggle"/>
+                </HBox>
+
+                <VBox spacing="5">
+                    <Label fx:id="sfxVolumeLabel" text="SFX: 70%" styleClass="volume-label"/>
+                    <Slider fx:id="sfxVolumeSlider"
+                            min="0"
+                            max="100"
+                            value="70"
+                            blockIncrement="5"
+                            majorTickUnit="25"
+                            showTickMarks="false"
+                            styleClass="volume-slider"
+                            prefWidth="280"/>
+                </VBox>
+            </VBox>
+
+            <Button text="RESET AUDIO DEFAULTS"
+                    onAction="#resetAudioSettings"
+                    maxWidth="Infinity"
+                    styleClass="ipad-dark-grey"
+                    prefWidth="280"/>
         </VBox>
 
-        <Separator prefWidth="300"/>
+        <Separator prefWidth="350"/>
 
-        <!-- Sound Effects Controls -->
-        <VBox spacing="5" alignment="CENTER_LEFT" prefWidth="300">
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <CheckBox fx:id="sfxToggle" text="Enable Sound Effects" styleClass="audio-toggle"/>
-            </HBox>
-
-            <VBox spacing="5">
-                <Label fx:id="sfxVolumeLabel" text="SFX: 70%" styleClass="volume-label"/>
-                <Slider fx:id="sfxVolumeSlider"
-                        min="0"
-                        max="100"
-                        value="70"
-                        blockIncrement="5"
-                        majorTickUnit="25"
-                        showTickMarks="false"
-                        styleClass="volume-slider"
-                        prefWidth="280"/>
-            </VBox>
+        <!-- Navigation Buttons -->
+        <VBox spacing="5" alignment="CENTER" prefWidth="350">
+            <Button text="CONTROLS" onAction="#showControls" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
+            <Button text="BACK TO MENU" onAction="#backToMenu" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
         </VBox>
-
-        <Button text="RESET AUDIO DEFAULTS"
-                onAction="#resetAudioSettings"
-                maxWidth="Infinity"
-                styleClass="ipad-dark-grey"
-                prefWidth="280"/>
-    </VBox>
-
-    <Separator prefWidth="350"/>
-
-    <!-- Navigation Buttons -->
-    <VBox spacing="5" alignment="CENTER" prefWidth="350">
-        <Button text="CONTROLS" onAction="#showControls" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
-        <Button text="BACK TO MENU" onAction="#backToMenu" maxWidth="Infinity" styleClass="ipad-dark-grey"/>
     </VBox>
 
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
-</VBox>
+</StackPane>
