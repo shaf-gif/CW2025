@@ -14,7 +14,7 @@ To compile and run this project, follow these steps:
     ```bash
     git clone https://github.com/shaf-gif/CW2025
     cd CW2025
-
+    ```okay just
 
 3.  **Compile the project:**
     Use the Maven Wrapper to compile the project. This will automatically download the correct Maven version and all necessary dependencies.
@@ -100,11 +100,15 @@ The following features were found to be **already implemented** in the provided 
 9.  **Hard Drop:**
     - **Function & Use:** Hard drop is a fundamental Tetris mechanic that allows players to instantly move the current falling brick to the lowest possible position on the board. This provides quick and precise placement, crucial for advanced strategies. The 'SPACE' bar triggers this action.
 
+10. **Floating Tetromino Constellations:**
+    - **Function & Use:** A visually appealing background animation present on both the main menu and game screens. This feature displays translucent tetromino outlines that slowly drift, rotate, and fade across the background, creating a serene "constellation" effect. The animation dynamically adjusts to window resizing, ensuring a consistent visual experience across different window sizes.
+
 ## UI Enhancements
 
 The game features a modern and intuitive user interface designed for an engaging player experience.
 
-*   **Overall Aesthetic:** The application employs a consistent dark theme, often leveraging `window_style.css` and `style.css` for a sleek, contemporary look. Styling elements like `ipad-dark-grey` suggest a polished, modern visual design.
+*   **Overall Aesthetic:** The application employs a consistent dark theme, often leveraging `window_style.css` and `style.css` for a sleek, contemporary look. The background now features a soft gradient and subtle animations.
+*   **Floating Tetromino Constellations:** A new visually appealing background animation featuring translucent tetromino outlines that slowly drift, rotate, and fade has been added to both the main menu and the game screen, creating a serene "constellation" effect. This animation dynamically adjusts to window resizing, ensuring a consistent and enhanced visual experience across various window dimensions.
 *   **Main Menu & Navigation:** A clear main menu (`menuLayout.fxml`) provides straightforward navigation with distinct buttons for "Start Game," "Leaderboard," "Settings," and "Exit." The player name input field is integrated seamlessly.
 *   **Game Board Presentation:** The primary game area is a grid (`gamePanel` in `gameLayout.fxml`) where individual brick tiles are rendered. The UI ensures that hidden rows are accounted for and provides a clean backdrop for gameplay.
 *   **Dynamic Information Displays:**
@@ -132,6 +136,7 @@ During development, I encountered issues with implementing certain features, suc
 
 The following classes represent new additions or significant refactorings in the codebase:
 
+*   **FloatingTetrominos**: Manages the background animation of floating, rotating tetromino outlines on both the main menu and game screens.
 *   **AudioManager**: Manages background music and sound effects for the game.
 *   **ControlsController**: Handles user input and controls for the game.
 *   **BrickViewManager**: Manages the visual representation and rendering of bricks on the game board, including the ghost shadow.
@@ -149,7 +154,7 @@ The following classes represent new additions or significant refactorings in the
 The following FXML files define the structure and layout for various user interface components in the application:
 
 *   **menuLayout.fxml**: Defines the user interface for the main menu of the game, including options to start a new game, view the leaderboard, adjust settings, and exit.
-*   **settingsLayout.fxml**: Defines the user interface for the game's settings screen, allowing players to adjust preferences such as audio volume and toggle music/SFX.
+*   **settingsLayout.fxml**: Defines the user interface for the game's settings screen, allowing players to adjust preferences suchs audio volume and toggle music/SFX.
 *   **controlsLayout.fxml**: Defines the user interface for displaying game controls and key bindings, helping players understand how to interact with the game.
 *   **leaderboardLayout.fxml**: Defines the user interface for displaying the game's high scores, player names, and other relevant ranking information.
 
@@ -157,7 +162,8 @@ The following FXML files define the structure and layout for various user interf
 
 Existing classes were modified to integrate new features and accommodate refactoring efforts, particularly for implementing design patterns and new game mechanics. These modifications include:
 
-*   **GuiController**: Manages the overall graphical user interface, coordinating between different UI elements and game logic.
+*   **MainMenu**: Modified to integrate and control the Floating Tetrominos background animation.
+*   **GuiController**: Manages the overall graphical user interface, coordinating between different UI elements and game logic, now including the Floating Tetrominos background animation.
 *   **GameController**: Orchestrates the main game loop, handles game state transitions, and integrates various game mechanics.
 *   **GameOverPanel**: Manages the display and behavior of the game over screen, including animations and user interaction.
 *   **Score**: Handles the calculation, storage, and updates of the player's score based on game events like line clears.
@@ -165,6 +171,8 @@ Existing classes were modified to integrate new features and accommodate refacto
 *   **RandomBrickGenerator**: Manages the generation of new bricks for the game, incorporating a "bag" system to ensure fair distribution and integrating special brick types like the SlowBrick.
 *   **MatrixOperations**: Provides utility methods for manipulating the game board's underlying matrix, crucial for brick movement, rotation, and collision detection.
 *   **SimpleBoard**: Represents the core game board logic, handling brick placement, row clearing, collision detection, and integrating features like hold, ghost shadow, and slow block effects.
+*   **BrickType**: Modified to include an `id` field and getter for numerical representation of brick types.
+
 
 ## Design Pattern Implementations
 

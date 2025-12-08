@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane; // Import for Pane
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,6 +38,11 @@ public class MainMenu implements Initializable {
     @FXML
     private Button resumeButton;
 
+    @FXML
+    private Pane tetrominoContainer; // FXML for the tetromino animation container
+
+    private FloatingTetrominos floatingTetrominos; // Instance of the FloatingTetrominos
+
     /** Stores the {@code Scene} of the active game, allowing it to be resumed. */
     private static Scene activeGameScene = null;
     /** The AudioManager instance for handling sound effects and music. */
@@ -59,6 +65,12 @@ public class MainMenu implements Initializable {
             resumeButton.setVisible(true);
             resumeButton.setManaged(true);
         }
+
+        // Initialize and start the FloatingTetrominos animation
+        if (tetrominoContainer != null) {
+            floatingTetrominos = new FloatingTetrominos(tetrominoContainer);
+            floatingTetrominos.startAnimations();
+        }
     }
 
     /**
@@ -70,6 +82,11 @@ public class MainMenu implements Initializable {
      */
     public void startGame(ActionEvent event) throws Exception {
         audioManager.playButtonClick();
+
+        // Stop FloatingTetrominos animation before leaving menu
+        if (floatingTetrominos != null) {
+            floatingTetrominos.stopAnimations();
+        }
 
         String playerName = nameField.getText().trim();
         if (playerName.isEmpty()) {
@@ -108,6 +125,11 @@ public class MainMenu implements Initializable {
     public void resumeGame(ActionEvent event) {
         audioManager.playButtonClick();
 
+        // Stop FloatingTetrominos animation before leaving menu
+        if (floatingTetrominos != null) {
+            floatingTetrominos.stopAnimations();
+        }
+
         if (activeGameScene != null) {
             Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
@@ -135,6 +157,11 @@ public class MainMenu implements Initializable {
     public void showLeaderboard(ActionEvent event) throws IOException {
         audioManager.playButtonClick();
 
+        // Stop FloatingTetrominos animation before leaving menu
+        if (floatingTetrominos != null) {
+            floatingTetrominos.stopAnimations();
+        }
+
         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
         URL location = getClass().getClassLoader().getResource("leaderboardLayout.fxml");
@@ -155,6 +182,11 @@ public class MainMenu implements Initializable {
     public void showSettings(ActionEvent event) throws IOException {
         audioManager.playButtonClick();
 
+        // Stop FloatingTetrominos animation before leaving menu
+        if (floatingTetrominos != null) {
+            floatingTetrominos.stopAnimations();
+        }
+
         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
         URL location = getClass().getClassLoader().getResource("settingsLayout.fxml");
@@ -174,6 +206,10 @@ public class MainMenu implements Initializable {
     public void exitGame(ActionEvent event) {
         audioManager.playButtonClick();
         audioManager.dispose();
+        // Stop FloatingTetrominos animation when exiting
+        if (floatingTetrominos != null) {
+            floatingTetrominos.stopAnimations();
+        }
         Platform.exit();
     }
 

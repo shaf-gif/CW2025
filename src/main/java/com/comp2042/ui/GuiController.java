@@ -11,7 +11,6 @@ import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Parent;
@@ -103,6 +102,10 @@ public class GuiController implements Initializable {
      * Label to indicate if slow mode is active, managed by FXML.
      */
     @FXML private javafx.scene.control.Label slowModeIndicator; // Added for slow mode visual feedback
+
+    @FXML private Pane tetrominoGameBackgroundContainer; // FXML for the tetromino animation container
+
+    private FloatingTetrominos floatingTetrominos; // Instance of the FloatingTetrominos
 
 
     /**
@@ -197,6 +200,11 @@ public class GuiController implements Initializable {
             }
         });
 
+        // Initialize and start the FloatingTetrominos animation
+        if (tetrominoGameBackgroundContainer != null) {
+            floatingTetrominos = new FloatingTetrominos(tetrominoGameBackgroundContainer);
+            floatingTetrominos.startAnimations();
+        }
 
         Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
@@ -481,6 +489,11 @@ public class GuiController implements Initializable {
         timeline.stop();
         isGameOver.set(true);
 
+        // Stop FloatingTetrominos animation when game is over
+        if (floatingTetrominos != null) {
+            floatingTetrominos.stopAnimations();
+        }
+
         AudioManager.getInstance().stopAllSoundEffects(); // Stop all sound effects on game over
 
         if (scoreTracker != null) {
@@ -526,67 +539,53 @@ public class GuiController implements Initializable {
      * @param evt The {@code ActionEvent} triggering the new game (e.g., button click).
      */
     public void newGame(ActionEvent evt) {
-
             AudioManager.getInstance().playButtonClick();
             AudioManager.getInstance().stopAllSoundEffects(); // Stop all sound effects on new game start
 
             timeline.stop();
 
-    
+            // Stop and restart FloatingTetrominos animation for new game
+            if (floatingTetrominos != null) {
+                floatingTetrominos.stopAnimations();
+                // Since the scene isn't reloaded, we need to regenerate tetrominos
+                // to ensure they are positioned correctly within the current container size.
+                // This will also restart animations.
+                floatingTetrominos = new FloatingTetrominos(tetrominoGameBackgroundContainer);
+                floatingTetrominos.startAnimations();
+            }
 
             MainMenu.clearActiveGame();
 
-    
-
             if (overlay != null && overlay.isVisible()) {
-
                 FadeTransition overlayFadeOut = new FadeTransition(Duration.millis(200), overlay);
-
                 overlayFadeOut.setFromValue(overlay.getOpacity());
-
                 overlayFadeOut.setToValue(0.0);
-
                 overlayFadeOut.setOnFinished(e -> overlay.setVisible(false));
-
                 overlayFadeOut.play();
-
             }
 
             gameOverPanel.setVisible(false);
-
             gameOverPanel.setOpacity(1.0);
-
             gameOverPanel.setScaleX(1.0);
-
             gameOverPanel.setScaleY(1.0);
-
-    
 
             eventListener.createNewGame();
 
             isPause.set(false);
-
             isGameOver.set(false);
-
             slowModeActive = false; // Reset slow mode on new game
-
             slowModeEndTime = 0L;
 
             if (slowModeIndicator != null) { // Ensure slowModeIndicator is hidden
-
                 slowModeIndicator.setText("SLOW MODE UNACTIVE");
-
                 slowModeIndicator.getStyleClass().clear(); // Clear existing classes
-
                 slowModeIndicator.getStyleClass().add("slow-mode-indicator"); // Add base class
-
             }
 
             pauseButton.setText("Pause");
 
             timeline.play();
             gamePanel.requestFocus();
-
         }
     /**
      * Navigates back to the main menu.
@@ -598,11 +597,15 @@ public class GuiController implements Initializable {
             // Automatically pause the game when navigating to the main menu
             pauseGame(null); 
 
+            // Stop FloatingTetrominos animation before leaving game
+            if (floatingTetrominos != null) {
+                floatingTetrominos.stopAnimations();
+            }
+
             AudioManager.getInstance().stopAllSoundEffects(); // Stop all sound effects before going to main menu
             AudioManager.getInstance().stopBackgroundMusic(); // Stop game background music
             Stage primaryStage = (Stage) ((javafx.scene.Node) evt.getSource()).getScene().getWindow();
             MainMenu.returnToMainMenu(primaryStage); // Correctly return to main menu
-
         }
     /**
      * Toggles the game's pause state. When paused, the game timeline stops, and the pause button text changes.
@@ -610,32 +613,22 @@ public class GuiController implements Initializable {
      * @param evt The {@code ActionEvent} triggering the pause/resume action.
      */
     public void pauseGame(ActionEvent evt) {
-
             AudioManager.getInstance().playButtonClick();
 
             if (isGameOver.get()) return;
 
-    
-
-            if (isPause.get()) {
-
+            if (isPause.get()) { // Resuming
+                if (floatingTetrominos != null) floatingTetrominos.startAnimations();
                 timeline.play();
-
                 pauseButton.setText("Pause");
-
                 isPause.set(false);
-
-            } else {
-
+            } else { // Pausing
+                if (floatingTetrominos != null) floatingTetrominos.stopAnimations();
                 timeline.pause();
-
                 pauseButton.setText("Resume");
-
                 isPause.set(true);
-
             }
             gamePanel.requestFocus();
-
         }
     /**
      * Resumes the game from a paused state, typically when returning from a menu.
@@ -643,19 +636,13 @@ public class GuiController implements Initializable {
      * This method only acts if the game is currently paused and not in a game over state.
      */
     public void resumeFromMenu() {
-
             if (isPause.get() && !isGameOver.get()) {
-
+                if (floatingTetrominos != null) floatingTetrominos.startAnimations(); // Restart animations
                 timeline.play();
-
                 pauseButton.setText("Pause");
-
                 isPause.set(false);
-
             }
-
             gamePanel.requestFocus();
-
         }
     /**
      * Toggles the visibility of the shadow/ghost brick via the {@code BrickViewManager}.
@@ -663,13 +650,9 @@ public class GuiController implements Initializable {
      * @param evt The {@code ActionEvent} triggering the toggle.
      */
     public void toggleShadow(ActionEvent evt) {
-
             AudioManager.getInstance().playButtonClick();
-
             brickViewManager.toggleShadow(evt);
-
             gamePanel.requestFocus();
-
         }
     /**
      * Sets the event listener for game input events.
@@ -677,11 +660,7 @@ public class GuiController implements Initializable {
      * @param listener The {@code InputEventListener} to be set.
      */
     void setEventListener(InputEventListener listener) {
-
             this.eventListener = listener;
-
         }
 
     }
-
-    

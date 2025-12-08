@@ -5,7 +5,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
 <?import java.net.URL?>
-<StackPane fx:controller="com.comp2042.ui.GuiController" xmlns:fx="http://javafx.com/fxml"           style="-fx-background-image: url('background_image.png');">
+<StackPane fx:controller="com.comp2042.ui.GuiController" xmlns:fx="http://javafx.com/fxml">
+
+    <!-- Tetromino Background Container -->
+    <Pane fx:id="tetrominoGameBackgroundContainer" StackPane.alignment="CENTER" />
+
     <Pane fx:id="gameContainer">
         <GridPane fx:id="brickPanel" vgap="1" hgap="1" />
 
